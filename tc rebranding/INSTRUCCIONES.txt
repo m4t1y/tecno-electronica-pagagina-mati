@@ -1,0 +1,45 @@
+========================================================================
+   GUIA E INSTRUCCIONES DEL PROYECTO: TC REBRANDING / TECNO ELECTRONICS
+========================================================================
+
+1. RESUMEN:
+------------
+Este pendrive contiene todo el codigo, archivos web, recursos, disenos,
+documentos y logica del proyecto TC Rebranding.
+
+2. ARCHIVOS PRINCIPALES EN EL PENDRIVE (D:\):
+----------------------------------------------
+* tc_rebranding_contexto.zip    -> Archivo comprimido con TODO el proyecto.
+* INSTRUCCIONES.txt             -> Este instructivo.
+* INSTRUCCIONES.md              -> Instructivo en formato Markdown.
+
+3. CARPETA DEL PROYECTO (D:\tc rebranding\):
+---------------------------------------------
+- index.html                   : Pagina principal en espanol.
+- index-english.html           : Pagina principal en ingles.
+- presentacion.html            : Presentacion interactiva del proyecto.
+- login.html                   : Portal de login / acceso de usuarios.
+- manual-usuario-timbre.html   : Manual de usuario del timbre automatico.
+- styles.css                   : Estilos visuales de la web.
+- main.js                      : Comportamiento y scripts principales.
+- tecno-bot.js / tecno-bot.css : Chatbot / asistente virtual interactivo.
+
+4. SECCION DE SERVICIOS (D:\tc rebranding\servicios\):
+-------------------------------------------------------
+- arduino.html                 : Modulo de prototipos Arduino.
+- cctv.html                    : Modulo de camaras y videovigilancia.
+- instalaciones-electricas.html: Modulo de instalaciones electricas.
+- marketing-digital.html       : Estrategia y marketing online.
+- metodo-lumen.html            : Calculos y proyectos luminotecnicos.
+- paginas-web.html             : Desarrollo y diseno web.
+- paneles-solares.html         : Instalacion solar y energia renovable.
+- plc.html                     : Automatizacion industrial y PLC.
+- timbre-automatico.html       : Timbre programable para escuelas/empresas.
+- inversor 1seg/               : Codigo Arduino (.ino), esquemas y diagramas.
+
+5. COMO EJECUTAR:
+------------------
+- Para ver la web: Abrir 'tc rebranding\index.html' con cualquier navegador web.
+- Para el codigo Arduino: Abrir el archivo .ino dentro de la carpeta 'inversor 1seg' con Arduino IDE.
+
+========================================================================

@@ -1,0 +1,768 @@
+/* ===================================================
+   TECNO BOT - Sistema de Chat, Diagnóstico y Asistencia
+   Tecno Electrónica - Estilos Oficiales
+   =================================================== */
+
+/* ── Botón Lanzador Flotante (Launcher) ── */
+.tecno-bot-launcher {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    user-select: none;
+    font-family: var(--font-body, 'Inter', sans-serif);
+}
+
+.tecno-bot-btn {
+    position: relative;
+    width: 62px;
+    height: 62px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #0B2538 0%, #102F45 60%, #18D4FF 150%);
+    border: 2px solid var(--accent-cyan, #18D4FF);
+    box-shadow: 0 8px 24px rgba(6, 26, 43, 0.7), 0 0 16px rgba(24, 212, 255, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #F7FAFC;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    outline: none;
+}
+
+.tecno-bot-btn:hover {
+    transform: translateY(-4px) scale(1.06);
+    box-shadow: 0 12px 30px rgba(6, 26, 43, 0.8), 0 0 24px rgba(24, 212, 255, 0.7);
+    border-color: #58F29C;
+}
+
+.tecno-bot-btn:active {
+    transform: translateY(0) scale(0.96);
+}
+
+.tecno-bot-avatar-icon {
+    font-size: 32px;
+    transition: transform 0.3s ease;
+}
+
+.tecno-bot-launcher:hover .tecno-bot-avatar-icon {
+    transform: rotate(10deg) scale(1.1);
+}
+
+/* Pulso animado alrededor del botón */
+.tecno-bot-pulse {
+    position: absolute;
+    top: -4px;
+    left: -4px;
+    right: -4px;
+    bottom: -4px;
+    border-radius: 50%;
+    border: 2px solid #18D4FF;
+    animation: botPulse 2.4s infinite cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    opacity: 0;
+    pointer-events: none;
+}
+
+@keyframes botPulse {
+    0% { transform: scale(0.95); opacity: 0.8; }
+    50% { transform: scale(1.3); opacity: 0; }
+    100% { transform: scale(1.3); opacity: 0; }
+}
+
+/* Badge de estado en línea */
+.tecno-bot-status-dot {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    width: 14px;
+    height: 14px;
+    background-color: #58F29C;
+    border: 2px solid #061A2B;
+    border-radius: 50%;
+    box-shadow: 0 0 8px #58F29C;
+}
+
+/* Tooltip / Teaser flotante */
+.tecno-bot-teaser {
+    background: rgba(11, 37, 56, 0.92);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(24, 212, 255, 0.35);
+    border-radius: 16px;
+    padding: 10px 16px;
+    color: #F7FAFC;
+    font-size: 0.88rem;
+    line-height: 1.35;
+    max-width: 240px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45);
+    animation: teaserFloat 3s ease-in-out infinite alternate;
+    position: relative;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.tecno-bot-teaser-title {
+    font-family: var(--font-display, 'Sora', sans-serif);
+    font-weight: 700;
+    font-size: 0.82rem;
+    color: #18D4FF;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.tecno-bot-teaser-text {
+    font-size: 0.78rem;
+    color: #B8C7D9;
+}
+
+.tecno-bot-teaser-close {
+    position: absolute;
+    top: 4px;
+    right: 6px;
+    background: none;
+    border: none;
+    color: #6B8299;
+    font-size: 14px;
+    cursor: pointer;
+    padding: 2px;
+    line-height: 1;
+}
+
+.tecno-bot-teaser-close:hover {
+    color: #F7FAFC;
+}
+
+@keyframes teaserFloat {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-5px); }
+}
+
+/* ── Ventana del Chat (Chat Window Modal) ── */
+.tecno-bot-window {
+    position: fixed;
+    bottom: 96px;
+    right: 24px;
+    width: 410px;
+    max-width: calc(100vw - 32px);
+    height: 630px;
+    max-height: calc(100vh - 120px);
+    background: #061A2B;
+    background: linear-gradient(180deg, #092135 0%, #061A2B 100%);
+    border: 1px solid rgba(24, 212, 255, 0.3);
+    border-radius: 20px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6), 0 0 30px rgba(24, 212, 255, 0.15);
+    display: flex;
+    flex-direction: column;
+    z-index: 10000;
+    overflow: hidden;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(20px) scale(0.95);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    font-family: var(--font-body, 'Inter', sans-serif);
+}
+
+.tecno-bot-window.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+}
+
+/* Header del Chat */
+.tecno-bot-header {
+    background: #0B2538;
+    background: linear-gradient(90deg, #0B2538 0%, #102F45 100%);
+    border-bottom: 1px solid rgba(24, 212, 255, 0.2);
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.tecno-bot-header-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.tecno-bot-header-avatar {
+    position: relative;
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: #102F45;
+    border: 1.5px solid #18D4FF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    color: #18D4FF;
+}
+
+.tecno-bot-header-avatar .pulse-mini {
+    position: absolute;
+    bottom: -2px;
+    right: -2px;
+    width: 10px;
+    height: 10px;
+    background: #58F29C;
+    border: 2px solid #0B2538;
+    border-radius: 50%;
+    box-shadow: 0 0 6px #58F29C;
+}
+
+.tecno-bot-header-titles h3 {
+    font-family: var(--font-display, 'Sora', sans-serif);
+    font-size: 1rem;
+    font-weight: 700;
+    color: #F7FAFC;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.tecno-bot-header-badge {
+    font-size: 0.65rem;
+    font-family: var(--font-mono, monospace);
+    background: rgba(24, 212, 255, 0.15);
+    color: #18D4FF;
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 1px solid rgba(24, 212, 255, 0.3);
+}
+
+.tecno-bot-header-titles p {
+    font-size: 0.76rem;
+    color: #58F29C;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.tecno-bot-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.tecno-bot-icon-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #B8C7D9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.tecno-bot-icon-btn:hover {
+    background: rgba(24, 212, 255, 0.2);
+    border-color: #18D4FF;
+    color: #F7FAFC;
+}
+
+/* Área de Mensajes */
+.tecno-bot-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    scroll-behavior: smooth;
+}
+
+.tecno-bot-messages::-webkit-scrollbar {
+    width: 6px;
+}
+.tecno-bot-messages::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+}
+.tecno-bot-messages::-webkit-scrollbar-thumb {
+    background: rgba(24, 212, 255, 0.2);
+    border-radius: 10px;
+}
+.tecno-bot-messages::-webkit-scrollbar-thumb:hover {
+    background: rgba(24, 212, 255, 0.4);
+}
+
+/* Mensajes individuales */
+.tecno-bot-msg-row {
+    display: flex;
+    gap: 10px;
+    max-width: 90%;
+    animation: msgIn 0.25s ease-out forwards;
+}
+
+@keyframes msgIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.tecno-bot-msg-row.bot {
+    align-self: flex-start;
+}
+
+.tecno-bot-msg-row.user {
+    align-self: flex-end;
+    flex-direction: row-reverse;
+}
+
+.tecno-bot-msg-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: #102F45;
+    border: 1px solid #18D4FF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    flex-shrink: 0;
+}
+
+.tecno-bot-msg-bubble {
+    padding: 12px 14px;
+    border-radius: 14px;
+    font-size: 0.88rem;
+    line-height: 1.45;
+    word-break: break-word;
+    position: relative;
+}
+
+.tecno-bot-msg-row.bot .tecno-bot-msg-bubble {
+    background: #0B2538;
+    color: #F7FAFC;
+    border: 1px solid rgba(24, 212, 255, 0.18);
+    border-top-left-radius: 4px;
+}
+
+.tecno-bot-msg-row.user .tecno-bot-msg-bubble {
+    background: linear-gradient(135deg, #007799 0%, #18D4FF 100%);
+    color: #04101A;
+    font-weight: 500;
+    border-top-right-radius: 4px;
+    box-shadow: 0 4px 12px rgba(24, 212, 255, 0.25);
+}
+
+.tecno-bot-msg-time {
+    font-size: 0.68rem;
+    color: #6B8299;
+    margin-top: 4px;
+    text-align: right;
+}
+
+.tecno-bot-msg-row.user .tecno-bot-msg-time {
+    color: rgba(4, 16, 26, 0.7);
+}
+
+/* Tarjeta de Diagnóstico / Solución Recomendada */
+.tecno-bot-card {
+    background: rgba(16, 47, 69, 0.85);
+    border: 1.5px solid #18D4FF;
+    border-radius: 12px;
+    padding: 14px;
+    margin-top: 8px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+}
+
+.tecno-bot-card-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid rgba(24, 212, 255, 0.2);
+    padding-bottom: 8px;
+    margin-bottom: 10px;
+}
+
+.tecno-bot-card-header .badge-tag {
+    background: rgba(88, 242, 156, 0.2);
+    color: #58F29C;
+    border: 1px solid #58F29C;
+    font-size: 0.7rem;
+    font-family: var(--font-mono, monospace);
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.tecno-bot-card-title {
+    font-family: var(--font-display, 'Sora', sans-serif);
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #F7FAFC;
+    margin: 0;
+}
+
+.tecno-bot-card-body {
+    font-size: 0.82rem;
+    color: #B8C7D9;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.tecno-bot-card-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+}
+
+.tecno-bot-card-item span.icon {
+    color: #18D4FF;
+    font-size: 16px;
+    margin-top: 1px;
+}
+
+.tecno-bot-card-actions {
+    margin-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.tecno-bot-card-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 9px 12px;
+    border-radius: 8px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+}
+
+.tecno-bot-card-btn.whatsapp {
+    background: #25D366;
+    color: #061A2B;
+}
+
+.tecno-bot-card-btn.whatsapp:hover {
+    background: #20BA56;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4);
+}
+
+.tecno-bot-card-btn.primary {
+    background: #18D4FF;
+    color: #061A2B;
+}
+
+.tecno-bot-card-btn.primary:hover {
+    background: #58F29C;
+    transform: translateY(-2px);
+}
+
+.tecno-bot-card-btn.outline {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(24, 212, 255, 0.4);
+    color: #18D4FF;
+}
+
+.tecno-bot-card-btn.outline:hover {
+    background: rgba(24, 212, 255, 0.15);
+    color: #F7FAFC;
+}
+
+/* Indicador de escritura (Typing...) */
+.tecno-bot-typing {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 10px 14px;
+    background: #0B2538;
+    border: 1px solid rgba(24, 212, 255, 0.15);
+    border-radius: 14px;
+    border-top-left-radius: 4px;
+    width: fit-content;
+}
+
+.tecno-bot-typing-dot {
+    width: 6px;
+    height: 6px;
+    background: #18D4FF;
+    border-radius: 50%;
+    animation: typingBounce 1.2s infinite ease-in-out;
+}
+
+.tecno-bot-typing-dot:nth-child(2) {
+    animation-delay: 0.2s;
+}
+.tecno-bot-typing-dot:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes typingBounce {
+    0%, 80%, 100% { transform: translateY(0); opacity: 0.4; }
+    40% { transform: translateY(-6px); opacity: 1; }
+}
+
+/* Opciones / Chips Interactivos Rápidos */
+.tecno-bot-chips-wrapper {
+    padding: 8px 14px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    background: rgba(11, 37, 56, 0.5);
+}
+
+.tecno-bot-chips-title {
+    font-size: 0.72rem;
+    color: #6B8299;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-family: var(--font-mono, monospace);
+}
+
+.tecno-bot-chips {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    max-height: 120px;
+    overflow-y: auto;
+}
+
+.tecno-bot-chip {
+    background: rgba(16, 47, 69, 0.8);
+    border: 1px solid rgba(24, 212, 255, 0.25);
+    color: #B8C7D9;
+    padding: 5px 10px;
+    border-radius: 16px;
+    font-size: 0.78rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+}
+
+.tecno-bot-chip:hover {
+    background: rgba(24, 212, 255, 0.2);
+    border-color: #18D4FF;
+    color: #F7FAFC;
+    transform: translateY(-1px);
+}
+
+.tecno-bot-chip.featured {
+    border-color: #58F29C;
+    color: #58F29C;
+    background: rgba(88, 242, 156, 0.1);
+    font-weight: 600;
+}
+
+.tecno-bot-chip.featured:hover {
+    background: rgba(88, 242, 156, 0.25);
+    color: #F7FAFC;
+}
+
+/* Área de Input y Envío */
+.tecno-bot-input-form {
+    padding: 12px 14px;
+    background: #0B2538;
+    border-top: 1px solid rgba(24, 212, 255, 0.2);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.tecno-bot-input {
+    flex: 1;
+    background: rgba(6, 26, 43, 0.8);
+    border: 1px solid rgba(184, 199, 217, 0.2);
+    border-radius: 10px;
+    padding: 10px 14px;
+    color: #F7FAFC;
+    font-size: 0.86rem;
+    outline: none;
+    transition: border-color 0.2s ease;
+}
+
+.tecno-bot-input:focus {
+    border-color: #18D4FF;
+    box-shadow: 0 0 10px rgba(24, 212, 255, 0.2);
+}
+
+.tecno-bot-input::placeholder {
+    color: #6B8299;
+}
+
+.tecno-bot-send-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: #18D4FF;
+    border: none;
+    color: #061A2B;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.tecno-bot-send-btn:hover {
+    background: #58F29C;
+    transform: scale(1.05);
+}
+
+.tecno-bot-send-btn:active {
+    transform: scale(0.95);
+}
+
+/* ── Sección / Banner de Tecno Bot en la Página Web ── */
+.tecno-bot-promo-banner {
+    background: linear-gradient(135deg, rgba(11, 37, 56, 0.95) 0%, rgba(16, 47, 69, 0.95) 100%);
+    border: 1.5px solid rgba(24, 212, 255, 0.4);
+    border-radius: 20px;
+    padding: 2.2rem;
+    margin: 3rem 0;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.5), 0 0 25px rgba(24, 212, 255, 0.15);
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 2rem;
+}
+
+.tecno-bot-promo-banner::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -20%;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(24, 212, 255, 0.12) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+.tecno-bot-promo-content h3 {
+    font-family: var(--font-display, 'Sora', sans-serif);
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #F7FAFC;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.tecno-bot-promo-content p {
+    font-size: 0.95rem;
+    color: #B8C7D9;
+    max-width: 680px;
+    line-height: 1.55;
+    margin-bottom: 1.2rem;
+}
+
+.tecno-bot-promo-features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.2rem;
+    margin-bottom: 0.5rem;
+}
+
+.tecno-bot-promo-feature-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85rem;
+    color: #58F29C;
+    font-weight: 500;
+}
+
+.tecno-bot-promo-btn {
+    background: linear-gradient(135deg, #18D4FF 0%, #00B4D8 100%);
+    color: #061A2B;
+    font-family: var(--font-display, 'Sora', sans-serif);
+    font-weight: 700;
+    font-size: 0.95rem;
+    padding: 14px 26px;
+    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 4px 18px rgba(24, 212, 255, 0.4);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: none;
+    white-space: nowrap;
+}
+
+.tecno-bot-promo-btn:hover {
+    background: linear-gradient(135deg, #58F29C 0%, #18D4FF 100%);
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(88, 242, 156, 0.5);
+    color: #061A2B;
+}
+
+/* ── Media Queries / Adaptabilidad Móvil ── */
+@media (max-width: 768px) {
+    .tecno-bot-promo-banner {
+        grid-template-columns: 1fr;
+        padding: 1.5rem;
+        gap: 1.5rem;
+    }
+    
+    .tecno-bot-promo-content h3 {
+        font-size: 1.3rem;
+    }
+    
+    .tecno-bot-promo-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .tecno-bot-launcher {
+        bottom: 16px;
+        right: 16px;
+    }
+
+    .tecno-bot-btn {
+        width: 54px;
+        height: 54px;
+    }
+
+    .tecno-bot-avatar-icon {
+        font-size: 28px;
+    }
+
+    .tecno-bot-teaser {
+        display: none;
+    }
+
+    .tecno-bot-window {
+        bottom: 0;
+        right: 0;
+        width: 100vw;
+        height: 100dvh;
+        max-width: 100vw;
+        max-height: 100dvh;
+        border-radius: 0;
+        border: none;
+    }
+
+    .tecno-bot-header {
+        border-radius: 0;
+        padding: 12px 14px;
+    }
+}

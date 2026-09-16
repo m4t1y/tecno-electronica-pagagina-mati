@@ -1,0 +1,1462 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tecno Electrónica — Auditoría Final 2026 | IPETyM Nº 84</title>
+    <link rel="icon" href="portada/logo.jpeg" type="image/jpeg">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+
+    <!-- Visor 3D Interactivo de Google (soporte online y offline) -->
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
+    <script type="module" src="model-viewer.min.js"></script>
+    <script src="timbre-3d-data.js"></script>
+
+    <style>
+        :root {
+            --bg-dark: #011525;
+            --bg-card: #081d30;
+            --bg-surface: #0e273e;
+            --accent-cyan: #18D4FF;
+            --accent-green: #58F29C;
+            --accent-glow: rgba(24, 212, 255, 0.25);
+            --text-main: #FFFFFF;
+            --text-muted: #93a9be;
+            --border: rgba(24, 212, 255, 0.2);
+            --border-hover: rgba(88, 242, 156, 0.4);
+            --font-display: 'Sora', sans-serif;
+            --font-body: 'Inter', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        /* Circuit Background Lines */
+        .bg-grid {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: 
+                radial-gradient(circle at 15% 15%, rgba(24, 212, 255, 0.07) 0%, transparent 40%),
+                radial-gradient(circle at 85% 85%, rgba(88, 242, 156, 0.06) 0%, transparent 40%),
+                linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Top Bar */
+        header.slide-header {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2.5rem;
+            background: rgba(8, 29, 48, 0.7);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .header-brand img {
+            width: 38px;
+            height: 38px;
+            border-radius: 8px;
+            border: 1px solid var(--accent-cyan);
+        }
+
+        .brand-title {
+            font-family: var(--font-display);
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-main);
+            letter-spacing: -0.01em;
+        }
+
+        .brand-title span {
+            color: var(--accent-cyan);
+        }
+
+        .header-center-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(24, 212, 255, 0.08);
+            border: 1px solid var(--border);
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-family: var(--font-mono);
+            color: var(--accent-cyan);
+        }
+
+        .speaker-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            background: rgba(88, 242, 156, 0.1);
+            border: 1px solid rgba(88, 242, 156, 0.3);
+            color: var(--accent-green);
+            padding: 0.4rem 1.2rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        /* Slide Container */
+        main.slide-viewport {
+            position: relative;
+            z-index: 5;
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem 3.5rem;
+        }
+
+        .slide {
+            display: none;
+            width: 100%;
+            max-width: 1350px;
+            height: 100%;
+            max-height: 720px;
+            animation: fadeInSlide 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        @keyframes fadeInSlide {
+            from { opacity: 0; transform: translateY(12px) scale(0.99); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* 3D Model Viewer */
+        model-viewer {
+            width: 100%;
+            height: 100%;
+            min-height: 290px;
+            --poster-color: transparent;
+            background-color: transparent;
+            outline: none;
+            cursor: grab;
+        }
+
+        model-viewer:active {
+            cursor: grabbing;
+        }
+
+        .model-3d-wrapper {
+            flex: 1;
+            min-height: 290px;
+            width: 100%;
+            position: relative;
+            border-radius: 12px;
+            background: radial-gradient(circle at 50% 45%, rgba(24, 212, 255, 0.12) 0%, rgba(1, 21, 37, 0.85) 75%);
+            border: 1px solid rgba(24, 212, 255, 0.25);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .model-3d-badge {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(1, 21, 37, 0.88);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(24, 212, 255, 0.3);
+            border-radius: 20px;
+            padding: 4px 14px;
+            font-size: 0.72rem;
+            font-family: var(--font-mono);
+            color: var(--text-muted);
+            pointer-events: none;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            z-index: 2;
+        }
+
+        /* Slide Titles */
+        .slide-tag {
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: var(--accent-cyan);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .slide-title {
+            font-family: var(--font-display);
+            font-size: 2.5rem;
+            font-weight: 800;
+            line-height: 1.15;
+            margin-bottom: 1.2rem;
+            background: linear-gradient(135deg, #FFFFFF 60%, var(--accent-cyan) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .slide-subtitle {
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            margin-bottom: 1.8rem;
+            max-width: 900px;
+            line-height: 1.5;
+        }
+
+        .hero-cover {
+            width: 100%;
+            min-height: 220px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            margin-bottom: 1.25rem;
+            padding: 0.5rem 0 0.25rem;
+        }
+
+        .hero-copy {
+            display: flex;
+            flex-direction: column;
+            gap: 0.45rem;
+            max-width: 1100px;
+        }
+
+        .hero-copy h1 {
+            font-family: var(--font-display);
+            font-size: clamp(3rem, 5vw, 6rem);
+            line-height: 0.98;
+            font-weight: 800;
+            letter-spacing: -0.06em;
+            margin: 0;
+            color: #f3f8ff;
+        }
+
+        .hero-copy .hero-accent {
+            color: #f3f8ff;
+        }
+
+        .hero-brand {
+            font-family: var(--font-display);
+            font-size: clamp(1.6rem, 2vw, 2.7rem);
+            color: var(--accent-cyan);
+            font-weight: 700;
+            letter-spacing: -0.04em;
+            margin-top: 0.35rem;
+        }
+
+        /* Layout Grids */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.8rem;
+            align-items: stretch;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            align-items: stretch;
+        }
+
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.2rem;
+        }
+
+        /* Card Blocks */
+        .slide-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 1.6rem;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+            transition: border-color 0.2s, transform 0.2s;
+        }
+
+        .slide-card:hover {
+            border-color: var(--border-hover);
+            transform: translateY(-2px);
+        }
+
+        .card-icon {
+            font-size: 2rem;
+            color: var(--accent-cyan);
+            margin-bottom: 0.8rem;
+        }
+
+        .card-title {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.6rem;
+            color: var(--text-main);
+        }
+
+        .card-desc {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            line-height: 1.45;
+        }
+
+        .highlight-text {
+            color: var(--accent-green);
+            font-weight: 600;
+        }
+
+        /* Metric Pill */
+        .metric-card {
+            background: linear-gradient(145deg, var(--bg-surface), var(--bg-card));
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 1.8rem;
+            text-align: center;
+        }
+
+        .metric-val {
+            font-family: var(--font-display);
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--accent-cyan);
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-val.green {
+            color: var(--accent-green);
+        }
+
+        .metric-label {
+            font-size: 0.9rem;
+            font-family: var(--font-mono);
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        /* Spec Table */
+        .spec-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+            margin-top: 0.5rem;
+        }
+
+        .spec-table th, .spec-table td {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .spec-table th {
+            color: var(--accent-cyan);
+            font-family: var(--font-mono);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+        }
+
+        .spec-table tr:hover td {
+            background: rgba(24, 212, 255, 0.04);
+        }
+
+        /* Action Buttons Inside Slides */
+        .slide-cta-row {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .btn-action {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.6rem;
+            border-radius: 10px;
+            font-family: var(--font-display);
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-cyan {
+            background: var(--accent-cyan);
+            color: var(--bg-dark);
+            box-shadow: 0 0 15px rgba(24, 212, 255, 0.4);
+        }
+
+        .btn-cyan:hover {
+            box-shadow: 0 0 25px rgba(24, 212, 255, 0.7);
+            transform: translateY(-2px);
+        }
+
+        .btn-ghost {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-main);
+        }
+
+        .btn-ghost:hover {
+            border-color: var(--accent-cyan);
+            background: rgba(24, 212, 255, 0.08);
+        }
+        /* Links del portafolio y diagrama interactivo de energía */
+        .service-link { color:inherit; text-decoration:none; display:flex; flex-direction:column; height:100%; gap:.35rem; }
+        .service-link::after { content:'Ver servicio →'; color:var(--accent-cyan); font-family:var(--font-mono); font-size:.72rem; margin-top:auto; padding-top:.55rem; opacity:.8; }
+        .slide-card:hover .service-link::after { opacity:1; transform:translateX(3px); }
+        .system-diagram { background:linear-gradient(145deg,rgba(11,37,56,.94),rgba(8,29,48,.94)); border:1px solid var(--border); border-radius:16px; padding:1.15rem 1.35rem; box-shadow:0 8px 30px rgba(0,0,0,.28); }
+        .diagram-chain { display:flex; justify-content:center; align-items:center; gap:.45rem; }
+        .diagram-node { appearance:none; flex:1; max-width:210px; min-height:94px; padding:.8rem; border:1px solid var(--border); border-radius:12px; background:var(--bg-card); color:inherit; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; cursor:pointer; transition:transform .2s,border-color .2s,box-shadow .2s,background .2s; }
+        .diagram-node:hover,.diagram-node:focus-visible,.diagram-node.selected { outline:none; transform:translateY(-3px); border-color:var(--accent-cyan); background:rgba(16,47,69,.9); box-shadow:0 0 22px rgba(24,212,255,.18); }
+        .diagram-node.power:hover,.diagram-node.power:focus-visible,.diagram-node.power.selected,.diagram-node.output:hover,.diagram-node.output:focus-visible,.diagram-node.output.selected { border-color:var(--accent-green); box-shadow:0 0 22px rgba(88,242,156,.17); }
+        .diagram-node .material-symbols-outlined { color:var(--accent-cyan); font-size:1.85rem; margin-bottom:.2rem; }
+        .diagram-node.power .material-symbols-outlined,.diagram-node.output .material-symbols-outlined { color:var(--accent-green); }
+        .diagram-node strong { font-family:var(--font-display); font-size:.95rem; color:var(--text-main); }
+        .diagram-node span:not(.material-symbols-outlined) { color:var(--text-muted); font-size:.7rem; line-height:1.25; margin-top:.18rem; }
+        .flow-arrow { position:relative; flex:0 0 42px; height:22px; display:flex; align-items:center; justify-content:center; color:var(--accent-green); overflow:hidden; }
+        .flow-arrow::before { content:''; position:absolute; left:0; right:0; top:10px; height:2px; background:linear-gradient(90deg,rgba(88,242,156,.18),var(--accent-green),rgba(88,242,156,.18)); }
+        .flow-arrow::after { content:''; position:absolute; width:7px; height:7px; top:7.5px; left:-7px; border-radius:50%; background:#d8ffea; box-shadow:0 0 10px var(--accent-green); animation:energyTravel 1.8s linear infinite; }
+        .flow-arrow .material-symbols-outlined { position:relative; z-index:1; font-size:1.15rem; background:var(--bg-surface); padding-left:1px; }
+        .flow-arrow.data { color:var(--accent-cyan); }
+        .flow-arrow.data::before { background:linear-gradient(90deg,rgba(24,212,255,.18),var(--accent-cyan),rgba(24,212,255,.18)); }
+        .flow-arrow.data::after { background:#e0faff; box-shadow:0 0 10px var(--accent-cyan); animation-duration:1.35s; }
+        @keyframes energyTravel { to { left:calc(100% + 7px); } }
+        .flow-note { display:flex; align-items:center; justify-content:center; gap:.35rem; margin:.55rem 0; color:var(--accent-green); font:600 .7rem var(--font-mono); letter-spacing:.04em; text-transform:uppercase; }
+        .flow-note::before,.flow-note::after { content:''; height:1px; flex:1; max-width:240px; background:linear-gradient(90deg,transparent,rgba(88,242,156,.55),transparent); }
+        .diagram-branches { display:grid; grid-template-columns:1fr 1fr; gap:1.4rem; position:relative; }
+        .diagram-branch { padding:1rem; border:1px dashed rgba(24,212,255,.22); border-radius:14px; background:rgba(6,26,43,.32); }
+        .diagram-branch.energy { border-color:rgba(88,242,156,.25); }
+        .branch-label { display:flex; justify-content:center; align-items:center; gap:.3rem; color:var(--text-muted); font:600 .68rem var(--font-mono); letter-spacing:.06em; text-transform:uppercase; margin-bottom:.55rem; }
+        .branch-row { display:flex; align-items:center; justify-content:center; gap:.45rem; }
+        .outputs { display:flex; flex:1; gap:.45rem; }
+        .outputs .diagram-node { min-width:0; }
+        .detail-panel { margin-top:.85rem; min-height:90px; padding:.85rem 1rem; border:1px solid rgba(24,212,255,.32); border-radius:12px; background:linear-gradient(90deg,rgba(24,212,255,.08),rgba(88,242,156,.05)); display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:.75rem; animation:detailReveal .25s ease-out; }
+        .detail-panel .material-symbols-outlined { color:var(--accent-cyan); font-size:2.1rem; }
+        .detail-panel h3 { font:700 1rem var(--font-display); color:var(--text-main); margin:0 0 .18rem; }
+        .detail-panel p { color:var(--text-muted); font-size:.82rem; line-height:1.4; margin:0; }
+        .detail-panel .detail-tag { color:var(--accent-green); font:600 .68rem var(--font-mono); text-align:right; text-transform:uppercase; }
+        .detail-panel .detail-action { display:inline-flex; align-items:center; gap:.35rem; width:max-content; margin-top:.55rem; padding:.42rem .7rem; border:1px solid rgba(24,212,255,.45); border-radius:7px; background:rgba(24,212,255,.1); color:var(--accent-cyan); font:700 .7rem var(--font-mono); text-decoration:none; transition:background .2s ease, border-color .2s ease, transform .2s ease; }
+        .detail-panel .detail-action:hover { background:rgba(24,212,255,.2); border-color:var(--accent-cyan); transform:translateY(-1px); }
+        @keyframes detailReveal { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+        @media (max-width:800px) { .diagram-chain,.branch-row { flex-wrap:wrap; } .diagram-node { min-width:128px; } .flow-arrow { flex-basis:100%; transform:rotate(90deg); } .diagram-branches { grid-template-columns:1fr; gap:.7rem; } .outputs { width:100%; } .detail-panel { grid-template-columns:auto 1fr; } .detail-panel .detail-tag { grid-column:2; text-align:left; } }
+
+        /* Ruta de señal de control desde el ESP32 */
+        .control-signal { display:flex; align-items:center; justify-content:center; gap:.75rem; margin-top:.8rem; padding:.7rem .95rem; border:1px solid rgba(24,212,255,.28); border-radius:12px; background:rgba(24,212,255,.045); }
+        .signal-label { display:flex; align-items:center; gap:.35rem; color:var(--accent-cyan); font:600 .68rem var(--font-mono); letter-spacing:.06em; text-transform:uppercase; white-space:nowrap; }
+        .signal-label .material-symbols-outlined { font-size:1.1rem; }
+        .signal-path { position:relative; flex:1; max-width:360px; height:24px; display:flex; align-items:center; overflow:hidden; color:var(--accent-cyan); }
+        .signal-path::before { content:''; position:absolute; left:0; right:0; top:11px; height:2px; background:linear-gradient(90deg,rgba(24,212,255,.12),rgba(24,212,255,.75),rgba(24,212,255,.12)); }
+        .signal-path::after { content:''; position:absolute; top:7px; left:-9px; width:9px; height:9px; border-radius:50%; background:#e0faff; box-shadow:0 0 12px var(--accent-cyan); animation:signalTravel 1.5s linear infinite; }
+        .signal-path .material-symbols-outlined { position:relative; z-index:1; margin-left:auto; background:var(--bg-surface); font-size:1.15rem; }
+        @keyframes signalTravel { to { left:calc(100% + 9px); } }
+        .btn-signal { border:1px solid rgba(88,242,156,.5); border-radius:8px; background:rgba(88,242,156,.08); color:var(--accent-green); padding:.45rem .7rem; font:600 .7rem var(--font-mono); cursor:pointer; display:inline-flex; align-items:center; gap:.3rem; white-space:nowrap; transition:background .2s,box-shadow .2s,transform .2s; }
+        .btn-signal:hover,.btn-signal:focus-visible { outline:none; background:rgba(88,242,156,.16); box-shadow:0 0 15px rgba(88,242,156,.22); }
+        .btn-signal:active { transform:scale(.96); }
+        .control-signal.signal-active .signal-path::after { animation-duration:.35s; box-shadow:0 0 18px var(--accent-cyan); }
+        .control-signal.signal-active { border-color:var(--accent-green); box-shadow:0 0 18px rgba(88,242,156,.14); }
+        .signal-feedback { min-width:120px; color:var(--text-muted); font-size:.7rem; text-align:left; }
+        @media (max-width:800px) { .control-signal { flex-wrap:wrap; } .signal-path { flex-basis:100%; order:3; } .signal-feedback { flex:1; } }
+                /* Bottom Controls Bar */
+        footer.slide-footer {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2.5rem;
+            background: rgba(8, 29, 48, 0.8);
+            backdrop-filter: blur(12px);
+            border-top: 1px solid var(--border);
+        }
+
+        .footer-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-family: var(--font-mono);
+        }
+
+        .key-hint {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            color: var(--accent-cyan);
+            font-weight: 700;
+        }
+
+        .footer-center {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .btn-nav {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-nav:hover {
+            border-color: var(--accent-cyan);
+            color: var(--accent-cyan);
+            box-shadow: 0 0 12px var(--accent-glow);
+        }
+
+        .slide-counter {
+            font-family: var(--font-mono);
+            font-size: 1rem;
+            color: var(--accent-cyan);
+            min-width: 90px;
+            text-align: center;
+        }
+
+        .footer-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .timer-box {
+            font-family: var(--font-mono);
+            font-size: 1rem;
+            color: var(--accent-green);
+            background: rgba(88, 242, 156, 0.08);
+            border: 1px solid rgba(88, 242, 156, 0.3);
+            padding: 0.35rem 0.9rem;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .btn-fullscreen {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            padding: 0.4rem 0.8rem;
+            border-radius: 8px;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: color 0.2s, border-color 0.2s;
+        }
+
+        .btn-fullscreen:hover {
+            color: var(--accent-cyan);
+            border-color: var(--accent-cyan);
+        }
+
+        /* Progress Bar */
+        .progress-bar-container {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.05);
+            z-index: 20;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-green));
+            transition: width 0.3s ease;
+            box-shadow: 0 0 10px rgba(88, 242, 156, 0.5);
+        }
+
+        /* Special Team Avatar Badge */
+        .team-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--bg-surface);
+            padding: 0.4rem 0.8rem;
+            border-radius: 30px;
+            border: 1px solid var(--border);
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+        }
+
+        .team-chip img {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-grid"></div>
+
+    <!-- Header -->
+    <header class="slide-header">
+        <a href="index.html" class="header-brand" style="text-decoration:none;cursor:pointer;">
+            <img src="portada/logo.jpeg" alt="Logo">
+            <div class="brand-title">Tecno <span>Electrónica</span></div>
+        </a>
+
+        <div class="header-center-badge">
+            <span class="material-symbols-outlined" style="font-size:16px;">school</span>
+            IPETyM Nº 84 "Jorge Vocos Lescano" — Auditoría 18/09
+        </div>
+
+        <div class="speaker-badge" id="current-speaker">
+            <span class="material-symbols-outlined" style="font-size:16px;">person</span>
+            <span>Felipe Aballay (Director Ejecutivo)</span>
+        </div>
+    </header>
+
+    <!-- Slide Viewport -->
+    <main class="slide-viewport">
+
+        <!-- SLIDE 1: Portada / Hero institucional -->
+        <section class="slide active" data-speaker="Felipe Aballay (Director Ejecutivo)" data-time="00:00 - 02:00">
+            <div class="hero-cover">
+                <div class="hero-copy">
+                    <h1>Timbre Automatizado<br><span class="hero-accent">para Escuelas</span></h1>
+                    <div class="hero-brand">Tecno Electrónica</div>
+                </div>
+            </div>
+
+            <div class="grid-3" style="margin-top: 1rem;">
+                <div class="slide-card">
+                    <span class="material-symbols-outlined card-icon">storefront</span>
+                    <div class="card-title">Empresa Simulada</div>
+                    <div class="card-desc">Estructura organizativa formal de 6 áreas operativas con estatuto y marco jurídico propio.</div>
+                </div>
+                <div class="slide-card">
+                    <span class="material-symbols-outlined card-icon" style="color:var(--accent-green);">schedule</span>
+                    <div class="card-title">Producto Estrella</div>
+                    <div class="card-desc">Timbre Automático Escolar con ESP32, RTC DS3231, servidor Wi-Fi local y memoria no volátil.</div>
+                </div>
+                <div class="slide-card">
+                    <span class="material-symbols-outlined card-icon">hub</span>
+                    <div class="card-title">Ecosistema Integral</div>
+                    <div class="card-desc">9 líneas de servicios técnicos orientadas al sector comercial, escolar e industrial.</div>
+                </div>
+            </div>
+
+            <div class="slide-cta-row">
+                <a href="index.html" target="_blank" class="btn-action btn-cyan">
+                    <span class="material-symbols-outlined">open_in_new</span> Abrir Web Oficial
+                </a>
+                <span style="font-family:var(--font-mono); font-size:0.85rem; color:var(--text-muted); align-self:center;">
+                    Presioná <span class="key-hint">ESPACIO</span> o <span class="key-hint">→</span> para avanzar
+                </span>
+            </div>
+        </section>
+
+        <!-- SLIDE 2: Equipo y organigrama -->
+        <section class="slide" data-speaker="Felipe Aballay (Director Ejecutivo)" data-time="02:00 - 04:00">
+            <div class="slide-tag"><span class="material-symbols-outlined">group</span> Estructura y Roles</div>
+            <h2 class="slide-title">Organizacion de la Empresa</h2>
+            <p class="slide-subtitle">Distribución estratégica de responsabilidades técnicas, operativas y de gestión de calidad.</p>
+
+            <div class="grid-3">
+                <div class="slide-card">
+                    <div class="team-chip"><img src="integrantes/felii.png"> <strong>Felipe Aballay</strong></div>
+                    <div class="card-title" style="color:var(--accent-cyan); font-size:1.05rem;">Director Ejecutivo</div>
+                    <div class="card-desc">Liderazgo institucional, coordinación de objetivos, vinculación con directivos y cumplimiento de plazos.</div>
+                </div>
+                <div class="slide-card">
+                    <div class="team-chip"><img src="integrantes/raul.png"> <strong>Raúl Boulchouk</strong></div>
+                    <div class="card-title" style="color:var(--accent-cyan); font-size:1.05rem;">Vocero / Marketing</div>
+                    <div class="card-desc">Relaciones públicas, estrategia comercial B2B para escuelas y comunicación institucional.</div>
+                </div>
+                <div class="slide-card">
+                    <div class="team-chip"><img src="integrantes/lioo.png"> <strong>Lionel Colsani</strong></div>
+                    <div class="card-title" style="color:var(--accent-cyan); font-size:1.05rem;">Responsable Técnico</div>
+                    <div class="card-desc">Diseño de circuitos, fabricación de PCB, conexionado eléctrico y cumplimiento de normas AEA.</div>
+                </div>
+                <div class="slide-card">
+                    <div class="team-chip"><img src="integrantes/pancho.png"> <strong>Ignacio Peralta</strong></div>
+                    <div class="card-title" style="color:var(--accent-cyan); font-size:1.05rem;">Diseñador UX/UI</div>
+                    <div class="card-desc">Identidad de marca, arquitectura visual web, planos técnicos y gabinete de la caja estanca.</div>
+                </div>
+                <div class="slide-card">
+                    <div class="team-chip"><img src="integrantes/emii.png"> <strong>Emiliano Martínez</strong></div>
+                    <div class="card-title" style="color:var(--accent-cyan); font-size:1.05rem;">Responsable de Costos</div>
+                    <div class="card-desc">Costeo de materiales, balance de mano de obra, punto de equilibrio y precios de venta.</div>
+                </div>
+                <div class="slide-card" style="border-color:var(--accent-green);">
+                    <div class="team-chip"><img src="integrantes/matii.png"> <strong>Matías Balderrama</strong></div>
+                    <div class="card-title" style="color:var(--accent-green); font-size:1.05rem;">Auditor de Calidad & Dev</div>
+                    <div class="card-desc">Control de calidad de software, pruebas de estrés del firmware, Tecno Bot y demo en vivo.</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 3: Problema real en la institución -->
+        <section class="slide" data-speaker="Felipe Aballay (Director Ejecutivo)" data-time="04:00 - 06:00">
+            <div class="slide-tag"><span class="material-symbols-outlined">crisis_alert</span> Diagnóstico de Situación</div>
+            <h2 class="slide-title">El Problema Real en las Instituciones</h2>
+            <p class="slide-subtitle">La dependencia del accionamiento manual del timbre genera pérdidas pedagógicas y fricciones institucionales.</p>
+
+            <div class="grid-3">
+                <div class="metric-card">
+                    <div class="metric-val">15%</div>
+                    <div class="metric-label">Tiempo de clase perdido</div>
+                    <p style="font-size:0.85rem; color:var(--text-muted); margin-top:0.8rem;">Promedio de minutos desfasados por turno escolar por olvido o falta de personal.</p>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-val green">100%</div>
+                    <div class="metric-label">Autónomo e Inmune a Cortes</div>
+                    <p style="font-size:0.85rem; color:var(--text-muted); margin-top:0.8rem;">El reloj mantiene la hora con una pila de respaldo y la memoria digital conserva los horarios programados.</p>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-val">-65%</div>
+                    <div class="metric-label">Costo vs. Equipos Importados</div>
+                    <p style="font-size:0.85rem; color:var(--text-muted); margin-top:0.8rem;">Frente a programadores industriales complejos y con interfaces en inglés.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 4: Validación de mercado / encuesta N=100 -->
+        <section class="slide" data-speaker="Felipe Aballay (Director Ejecutivo)" data-time="06:00 - 07:00">
+            <div class="slide-tag"><span class="material-symbols-outlined">poll</span> Validación de Mercado — Encuesta N=100</div>
+            <h2 class="slide-title">Lo Que Dice el Mercado</h2>
+            <p class="slide-subtitle">Encuesta realizada a directivos y referentes escolares de la zona sobre la percepción del timbre manual y el interés real en un sistema automatizado.</p>
+
+            <div class="grid-3">
+                <div class="metric-card">
+                    <div class="metric-val green">90%</div>
+                    <div class="metric-label">Interés en Implementar</div>
+                    <p style="font-size:0.85rem; color:var(--text-muted); margin-top:0.8rem;">8% tal vez lo implementaría · 2% no.</p>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-val">90%</div>
+                    <div class="metric-label">Lo Ve "Muy Útil"</div>
+                    <p style="font-size:0.85rem; color:var(--text-muted); margin-top:0.8rem;">8% lo considera útil · 2% poco útil.</p>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-val">90%</div>
+                    <div class="metric-label">Timbre Manual "Poco Eficiente"</div>
+                    <p style="font-size:0.85rem; color:var(--text-muted); margin-top:0.8rem;">6% lo ve nada eficiente · 4% neutral.</p>
+                </div>
+            </div>
+            <p style="font-size:0.75rem; color:var(--text-muted); margin-top:1.3rem; font-family:var(--font-mono);">Fuente: encuesta interna a directivos y personal escolar — Felipe Aballay (Director Ejecutivo), N=100.</p>
+        </section>
+
+        <!-- SLIDE 5: Estrategia comercial y propuesta de valor -->
+        <section class="slide" data-speaker="Raúl Boulchouk (Vocero / Marketing)" data-time="07:00 - 09:00">
+            <div class="slide-tag"><span class="material-symbols-outlined">campaign</span> Estrategia Comercial B2B</div>
+            <h2 class="slide-title">Propuesta de Valor para Colegios</h2>
+            <p class="slide-subtitle">No vendemos un reloj eléctrico: vendemos orden institucional, tranquilidad directiva y cumplimiento normativo.</p>
+
+            <div class="grid-3">
+                <div class="slide-card">
+                    <span class="material-symbols-outlined card-icon">gavel</span>
+                    <div class="card-title">1. Cumplimiento Laboral</div>
+                    <div class="card-desc">Garantiza los horarios exactos de entrada y salida docente, evitando reclamos sindicales y fricciones internas.</div>
+                </div>
+                <div class="slide-card">
+                    <span class="material-symbols-outlined card-icon" style="color:var(--accent-green);">verified_user</span>
+                    <div class="card-title">2. Seguridad & Simulacros</div>
+                    <div class="card-desc">Protocolo para simulacros de evacuación y alertas de emergencia mediante toques rítmicos codificados.</div>
+                </div>
+                <div class="slide-card">
+                    <span class="material-symbols-outlined card-icon">trending_up</span>
+                    <div class="card-title">3. Modernización Institucional</div>
+                    <div class="card-desc">El preceptor o director configura los horarios desde su propio celular en menos de 2 minutos sin cables.</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 6: Comparativa comercial / por qué elegirnos -->
+        <section class="slide" data-speaker="Emiliano Martínez (Resp. de Costos)" data-time="09:00 - 11:00">
+            <div class="slide-tag"><span class="material-symbols-outlined">balance</span> Análisis de Mercado</div>
+        <h2 class="slide-title">Porque elegirnos?</h2>
+
+            <div class="slide-card">
+                <table class="spec-table" style="table-layout:fixed; width:100%;">
+                    <thead>
+                        <tr>
+                            <th style="width:25%;">Característica</th>
+                            <th style="width:25%; color:var(--accent-green);">Tecno Electrónica (Nosotros)</th>
+                            <th style="width:25%;">Timer Riel DIN Digital</th>
+                            <th style="width:25%;">Campana Manual</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Interfaz de Control</strong></td>
+                            <td class="highlight-text">Web desde cualquier Celular / PC</td>
+                            <td>Display diminuto y botones rígidos</td>
+                            <td>Pulsador en preceptoría</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Memoria de Horarios</strong></td>
+                            <td class="highlight-text">Hasta 40 horarios independientes</td>
+                            <td>16 a 28 programas complejos</td>
+                            <td>Depende de la memoria humana</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Comportamiento ante corte</strong></td>
+                            <td class="highlight-text">Conserva hora exacta y reanuda solo</td>
+                            <td>Suele atrasarse o desconfigurar</td>
+                            <td>No suena si no hay luz</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Costo Total</strong></td>
+                            <td class="highlight-text">Accesible y con soporte local en Tanti</td>
+                            <td>Muy costoso + electricista calificado</td>
+                            <td>Costo oculto en horas perdidas</td>
+                        </tr>
+                        <tr style="border-top:2px solid rgba(24,212,255,0.25);">
+                            <td style="vertical-align:middle;"><strong>Referencia Visual</strong></td>
+                            <td>
+                                <div style="border-radius:8px; overflow:hidden; border:1px solid var(--accent-green); height:85px; position:relative; box-shadow:0 0 10px rgba(88,242,156,0.2);">
+                                    <img src="servicios/timbre automatico/gabinete-tecno.jpg.png" alt="Gabinete de Tecno Electrónica" style="width:100%; height:100%; object-fit:cover; display:block;">
+                                    <span style="position:absolute; bottom:0; left:0; right:0; background:rgba(6,26,43,0.85); font-size:0.68rem; font-family:var(--font-mono); color:var(--accent-green); padding:2px 4px; text-align:center; display:block; font-weight:700;">Gabinete Tecno Electrónica</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div style="border-radius:8px; overflow:hidden; border:1px solid var(--border); height:85px; position:relative;">
+                                    <img src="servicios/instalacion electrica/tablero-electrico.jpg" alt="Tablero Timer Riel DIN" style="width:100%; height:100%; object-fit:cover; display:block;">
+                                    <span style="position:absolute; bottom:0; left:0; right:0; background:rgba(6,26,43,0.85); font-size:0.68rem; font-family:var(--font-mono); color:var(--text-muted); padding:2px 4px; text-align:center; display:block;">Tablero Riel DIN</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div style="border-radius:8px; overflow:hidden; border:1px solid var(--border); height:85px; position:relative;">
+                                    <img src="servicios/timbre automatico/timbre-escuela.jpg" alt="Campana Escolar Manual" style="width:100%; height:100%; object-fit:cover; display:block;">
+                                    <span style="position:absolute; bottom:0; left:0; right:0; background:rgba(6,26,43,0.85); font-size:0.68rem; font-family:var(--font-mono); color:var(--text-muted); padding:2px 4px; text-align:center; display:block;">Campana Manual</span>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- SLIDE 7: Arquitectura del sistema: energía y control -->
+        <section class="slide" data-speaker="Lionel Colsani (Responsable Técnico)" data-time="11:00 - 13:00">
+            <div class="slide-tag"><span class="material-symbols-outlined">account_tree</span> explicacion de circuito</div>
+            <h2 class="slide-title">Cómo viaja la energía y el control</h2>
+            <p class="slide-subtitle">Tocá cualquier bloque para explorar su función. Las flechas verdes muestran el recorrido de la energía; las celestes, el intercambio de datos.</p>
+            <div class="system-diagram" aria-label="Diagrama interactivo del sistema de alimentación y control">
+                <div class="diagram-chain">
+                    <button class="diagram-node power selected" type="button" data-detail="solar"><span class="material-symbols-outlined">solar_power</span><strong>Panel solar</strong><span>Luz solar → electricidad</span></button>
+                    <div class="flow-arrow" aria-hidden="true"><span class="material-symbols-outlined">arrow_forward</span></div>
+                    <button class="diagram-node power" type="button" data-detail="regulador"><span class="material-symbols-outlined">tune</span><strong>Regulador de carga</strong><span>Administra la carga</span></button>
+                    <div class="flow-arrow" aria-hidden="true"><span class="material-symbols-outlined">arrow_forward</span></div>
+                    <button class="diagram-node power" type="button" data-detail="bateria"><span class="material-symbols-outlined">battery_charging_full</span><strong>Batería de 12 V</strong><span>Almacena la energía</span></button>
+                </div>
+                <div class="flow-note"><span class="material-symbols-outlined">south</span> la batería alimenta dos caminos <span class="material-symbols-outlined">south</span></div>
+                <div class="diagram-branches">
+                    <div class="diagram-branch">
+                        <div class="branch-label"><span class="material-symbols-outlined">memory</span> Control de baja tensión</div>
+                        <div class="branch-row">
+                            <button class="diagram-node" type="button" data-detail="reductor"><span class="material-symbols-outlined">settings_input_component</span><strong>Reductor</strong><span>12 V → 5 V</span></button>
+                            <div class="flow-arrow" aria-hidden="true"><span class="material-symbols-outlined">arrow_forward</span></div>
+                            <button class="diagram-node" type="button" data-detail="esp32"><span class="material-symbols-outlined">memory</span><strong>ESP32</strong><span>cerebro del sistema</span></button>
+                            <div class="flow-arrow data" aria-label="Datos en ambos sentidos entre la página local y el ESP32"><span class="material-symbols-outlined">sync_alt</span></div>
+                            <button class="diagram-node" type="button" data-detail="web"><span class="material-symbols-outlined">language</span><strong>Página local</strong><span>Programación y mando</span></button>
+                        </div>
+                    </div>
+                    <div class="diagram-branch energy">
+                        <div class="branch-label"><span class="material-symbols-outlined">bolt</span> Señales de 220 V</div>
+                        <div class="branch-row">
+                            <button class="diagram-node power" type="button" data-detail="inversor"><span class="material-symbols-outlined">swap_vert</span><strong>Inversor</strong><span>12 V → 220 V</span></button>
+                            <div class="flow-arrow" aria-hidden="true"><span class="material-symbols-outlined">arrow_forward</span></div>
+                            <div class="outputs">
+                                <button class="diagram-node output" type="button" data-detail="timbres"><span class="material-symbols-outlined">notifications_active</span><strong>Timbres</strong><span>Señales programadas</span></button>
+                                <button class="diagram-node output" type="button" data-detail="sirena"><span class="material-symbols-outlined">warning</span><strong>Sirena</strong><span>Evacuación manual</span></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="control-signal" id="control-signal" aria-label="Ruta de señal desde el ESP32 hacia los timbres y la sirena">
+                    <div class="signal-label"><span class="material-symbols-outlined">memory</span> ESP32</div>
+                    <div class="signal-path" aria-hidden="true"><span class="material-symbols-outlined">arrow_forward</span></div>
+                    <div class="signal-label"><span class="material-symbols-outlined">switch</span> Módulo de control</div>
+                    <div class="signal-path" aria-hidden="true"><span class="material-symbols-outlined">arrow_forward</span></div>
+                    <div class="signal-label"><span class="material-symbols-outlined">notifications_active</span> Timbres / sirena</div>
+                    <button class="btn-signal" id="btn-manual-bell" type="button"><span class="material-symbols-outlined">touch_app</span> Probar señal manual</button>
+                    <span class="signal-feedback" id="signal-feedback" aria-live="polite">Listo para enviar</span>
+                </div>
+                <section class="detail-panel" id="diagram-detail" aria-live="polite">
+                    <span class="material-symbols-outlined">solar_power</span><div><h3>Panel solar</h3><p>Convierte la luz del sol en electricidad de corriente continua, que luego el regulador prepara para cargar la batería.</p></div><span class="detail-tag">Energía renovable</span>
+                </section>
+            </div>
+        </section>
+        <!-- SLIDE 8: Gabinete mecánico y montaje -->
+        <section class="slide" data-speaker="Ignacio Peralta (Diseñador UX/UI)" data-time="13:00 - 14:00">
+            <div class="slide-tag"><span class="material-symbols-outlined">inventory_2</span> Diseño Mecánico</div>
+            <h2 class="slide-title">diseño de gabinete</h2>
+            <p class="slide-subtitle">Protección de la electrónica ante condiciones reales de uso institucional.</p>
+
+            <div class="grid-2">
+                <!-- Modelo 3D Interactivo a la Izquierda -->
+                <div class="slide-card" style="padding:1.2rem; display:flex; flex-direction:column; justify-content:space-between;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.6rem;">
+                        <div class="card-title" style="margin-bottom:0; font-size:1.15rem; display:flex; align-items:center; gap:0.5rem;">
+                            <span class="material-symbols-outlined" style="color:var(--accent-cyan); font-size:1.4rem;">view_in_ar</span>
+                            Modelo 3D del Gabinete
+                        </div>
+                        <span style="font-family:var(--font-mono); font-size:0.7rem; color:var(--accent-green); background:rgba(88,242,156,0.1); border:1px solid rgba(88,242,156,0.3); padding:0.2rem 0.6rem; border-radius:12px; font-weight:600;">
+                            3D Interactivo
+                        </span>
+                    </div>
+
+                    <div class="model-3d-wrapper">
+                        <model-viewer id="timbre-model-viewer"
+                            src="timbre-3d.glb"
+                            alt="Modelo 3D del Gabinete del Timbre Automático Escolar"
+                            auto-rotate
+                            rotation-per-second="22deg"
+                            camera-controls
+                            touch-action="pan-y"
+                            shadow-intensity="1.3"
+                            shadow-softness="0.75"
+                            exposure="1.1"
+                            interaction-prompt="auto"
+                            camera-orbit="35deg 65deg auto">
+                            
+                            <div slot="poster" style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; color:var(--accent-cyan); font-family:var(--font-mono); font-size:0.8rem; gap:0.4rem;">
+                                <span class="material-symbols-outlined" style="font-size:2rem; animation:spin 1s linear infinite;">progress_activity</span>
+                                <span>Cargando modelo CAD 3D...</span>
+                            </div>
+                        </model-viewer>
+
+                        <div class="model-3d-badge">
+                            <span class="material-symbols-outlined" style="font-size:14px; color:var(--accent-cyan);">3d_rotation</span> Arrastrá para girar · Rueda para zoom
+                        </div>
+                    </div>
+
+                    <div style="margin-top:0.65rem; display:flex; justify-content:space-between; align-items:center; font-size:0.75rem; color:var(--text-muted); font-family:var(--font-mono);">
+                        <span>(Caja impresa en 3D)</span>
+                        <div style="display:flex; gap:0.4rem;">
+                            <button type="button" id="btn-toggle-rotate" style="background:rgba(24,212,255,0.08); border:1px solid rgba(24,212,255,0.25); color:var(--accent-cyan); font-size:0.7rem; padding:3px 8px; border-radius:6px; cursor:pointer; font-family:var(--font-mono);">
+                                Pausar giro
+                            </button>
+                            <button type="button" id="btn-reset-cam" style="background:rgba(88,242,156,0.08); border:1px solid rgba(88,242,156,0.25); color:var(--accent-green); font-size:0.7rem; padding:3px 8px; border-radius:6px; cursor:pointer; font-family:var(--font-mono);">
+                                Resetear vista
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Especificaciones Técnicas a la Derecha -->
+                <div class="slide-card" style="display:flex; flex-direction:column; justify-content:space-between;">
+                    <div>
+                        <div class="card-title" style="margin-bottom:0.7rem;">Caja de Distribución Modular</div>
+                        <ul style="list-style:none; line-height:2.1; color:var(--text-muted); font-size:0.92rem;">
+                            <li><span class="highlight-text">✓</span> <strong>Gabinete estanco:</strong> Tapa transparente de fácil inspección visual sin abrir el equipo.</li>
+                            <li><span class="highlight-text">✓</span> <strong>Montaje interno:</strong> Fijación para PCB, ESP32 todo dentro de un gabinete.</li>
+                            <li><span class="highlight-text">✓</span> <strong>Conexión segura:</strong> Bornera para dividir baja tension de la alta tension para una conexion segura de los cables de la campana.</li>
+                            <li><span class="highlight-text">✓</span> <strong>Indicador de conexión:</strong> boton digital testigo de alimentación activa y estado de enlace Wi-Fi.</li>
+                        </ul>
+                    </div>
+
+                    <div style="margin-top:0.8rem; padding:0.9rem 1.1rem; background:rgba(24,212,255,0.05); border:1px solid rgba(24,212,255,0.25); border-radius:10px; display:flex; align-items:center; gap:1rem;">
+                        <span class="material-symbols-outlined" style="font-size:2.3rem; color:var(--accent-cyan); flex-shrink:0;">precision_manufacturing</span>
+                        <div>
+                            <strong style="color:var(--text-main); font-size:0.95rem; display:block; margin-bottom:0.2rem;">Instalación Limpia en 45 Minutos</strong>
+                            <p style="font-size:0.82rem; color:var(--text-muted); margin:0; line-height:1.4;">
+                                Se monta junto al tablero general o campanario escolar existente sin romper paredes ni interrumpir la jornada pedagógica.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 9: Costos y presupuesto orientativo -->
+        <section class="slide" data-speaker="Emiliano Martínez (Resp. de Costos)" data-time="14:00 - 16:00">
+            <div class="slide-tag"><span class="material-symbols-outlined">payments</span> Viabilidad Financiera</div>
+            <h2 class="slide-title">Estructura de Costos del Timbre</h2>
+            <p class="slide-subtitle">Cálculo riguroso de lista de materiales, mano de obra técnica y margen de utilidad del proyecto.</p>
+
+            <div class="grid-2">
+                <div class="slide-card">
+                    <div class="card-title">Desglose de Materiales y Electrónica</div>
+                    <p class="card-desc" style="margin-bottom:0.8rem;">
+                        Costos directos de insumos para el módulo automatizador del timbre:
+                    </p>
+                    <table class="spec-table">
+                        <tr><th>Componente</th><th style="text-align:right;">Subtotal</th></tr>
+                        <tr><td>Microcontrolador ESP32 (Wi-Fi integrado)</td><td style="text-align:right; font-family:var(--font-mono);">$ 11.159</td></tr>
+                        <tr><td>Módulo de reloj de precisión RTC DS3231 (c/ pila)</td><td style="text-align:right; font-family:var(--font-mono);">$ 8.851</td></tr>
+                        <tr><td>Placa base Pertinax y circuito de disparo</td><td style="text-align:right; font-family:var(--font-mono);">$ 6.146</td></tr>
+                        <tr><td>Relé de control 5V inversor y borneras</td><td style="text-align:right; font-family:var(--font-mono);">$ 1.480</td></tr>
+                        <tr><td>Cables y conexionado interno (Dupont)</td><td style="text-align:right; font-family:var(--font-mono);">$ 1.526</td></tr>
+                        <tr style="border-top:2px solid var(--accent-cyan);"><td><strong style="color:var(--text-main);">TOTAL MATERIALES</strong></td><td style="text-align:right;"><strong style="color:var(--accent-cyan); font-family:var(--font-mono); font-size:1.05rem;">$ 29.162</strong></td></tr>
+                    </table>
+                </div>
+
+                <div class="slide-card" style="display:flex; flex-direction:column; justify-content:space-between;">
+                    <div>
+                        <div class="card-title">Estructura Comercial y Precio Final</div>
+                        <p class="card-desc" style="margin-bottom:1.1rem;">
+                            Cálculo integral considerando mano de obra calificada, herramientas y margen:
+                        </p>
+                        
+                        <div style="background:rgba(24, 212, 255, 0.06); border:1px solid rgba(24, 212, 255, 0.3); border-radius:12px; padding:0.9rem 1.2rem; margin-bottom:1.1rem; display:flex; justify-content:space-between; align-items:center;">
+                            <div>
+                                <span style="font-size:0.75rem; font-family:var(--font-mono); color:var(--text-muted); text-transform:uppercase; display:block;">Precio Final Sugerido</span>
+                                <strong style="font-size:1.85rem; font-family:var(--font-display); color:var(--accent-green); line-height:1.1;">$ 200.956</strong>
+                            </div>
+                            <div style="text-align:right;">
+                                <span style="font-size:0.75rem; font-family:var(--font-mono); color:var(--accent-cyan); background:rgba(24,212,255,0.12); border:1px solid rgba(24,212,255,0.25); padding:0.25rem 0.6rem; border-radius:6px; font-weight:700;">+60% Margen</span>
+                            </div>
+                        </div>
+
+                        <div style="display:flex; flex-direction:column; gap:0.6rem; font-size:0.88rem; color:var(--text-muted);">
+                            <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.06); padding-bottom:0.35rem;">
+                                <span><strong style="color:var(--text-main);">• Mano de obra técnica</strong> (6 hs armado y calibración):</span>
+                                <span style="font-family:var(--font-mono); color:var(--text-main); font-weight:600;">$ 90.000</span>
+                            </div>
+                            <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.06); padding-bottom:0.35rem;">
+                                <span><strong style="color:var(--text-main);">• Costos operativos y herramientas</strong> (10% + fijos):</span>
+                                <span style="font-family:var(--font-mono); color:var(--text-main); font-weight:600;">$ 6.436</span>
+                            </div>
+                            <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.06); padding-bottom:0.35rem;">
+                                <span><strong style="color:var(--text-main);">• Costo base total</strong> (materiales + mano de obra):</span>
+                                <span style="font-family:var(--font-mono); color:var(--accent-cyan); font-weight:600;">$ 125.598</span>
+                            </div>
+                            <div style="display:flex; justify-content:space-between;">
+                                <span><strong style="color:var(--accent-green);">• Ganancia neta estimada</strong> (60% utilidad):</span>
+                                <span style="font-family:var(--font-mono); color:var(--accent-green); font-weight:700;">$ 75.358</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top:1.1rem; padding:0.7rem 0.9rem; background:rgba(88,242,156,0.06); border-left:3px solid var(--accent-green); border-radius:6px; font-size:0.78rem; color:var(--text-muted); line-height:1.4;">
+                        <strong style="color:var(--accent-green);">Nota de relevamiento:</strong> El precio varía según el resultado del relevamiento técnico de la zona realizado previamente (distancias de cableado y estado del campanario).
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 10: Relevamiento técnico en el colegio -->
+        <section class="slide" data-speaker="Felipe Aballay (Director Ejecutivo)" data-time="16:00 - 18:00">
+            <div class="slide-tag"><span class="material-symbols-outlined">fact_check</span> Del Presupuesto Orientativo al Cierre Final</div>
+            <h2 class="slide-title">Relevamiento Técnico en el Colegio</h2>
+            <p class="slide-subtitle">Antes de instalar, visitamos la institución para confirmar qué se puede reutilizar de la instalación existente. Ese relevamiento es el que define el presupuesto definitivo.</p>
+
+            <div class="grid-2">
+                <div class="slide-card" style="border-color:var(--accent-green);">
+                    <div class="card-title" style="color:var(--accent-green); display:flex; align-items:center; gap:0.5rem;">
+                        <span class="material-symbols-outlined">engineering</span>
+                        Procedimiento Paso a Paso
+                    </div>
+                    <ol style="line-height:2; color:var(--text-main); padding-left:1.2rem; font-size:0.95rem;">
+                        <li><strong>Confirmación de venta:</strong> se acuerda el presupuesto orientativo inicial y se agenda la visita al establecimiento.</li>
+                        <li><strong>Inspección del tablero eléctrico:</strong> estado de llaves térmicas, disyuntor diferencial y capacidad disponible para la nueva carga.</li>
+                        <li><strong>Relevamiento del campanario o timbre actual:</strong> tipo de campana, recorrido del cableado existente y distancia hasta el punto de instalación del gabinete.</li>
+                        <li><strong>Evaluación de reutilización:</strong> se define qué cableado, campana o transformador se conserva y qué hay que reemplazar.</li>
+                        <li><strong>Ajuste del presupuesto final:</strong> con los datos relevados se cierra el número definitivo, tal como se indica en la sección de costos.</li>
+                        <li><strong>Firma y cronograma de instalación:</strong> se coordina con la institución la fecha de montaje.</li>
+                    </ol>
+                </div>
+                <div class="slide-card" style="display:flex; flex-direction:column; justify-content:space-between;">
+                    <div>
+                        <div class="card-title">Qué Relevamos en el Lugar</div>
+                        <ul style="list-style:none; line-height:2.1; color:var(--text-muted); font-size:0.92rem;">
+                            <li><span class="highlight-text">✓</span> Estado del tablero eléctrico y de las protecciones existentes.</li>
+                            <li><span class="highlight-text">✓</span> Cableado actual entre preceptoría y campanario.</li>
+                            <li><span class="highlight-text">✓</span> Ubicación óptima para el gabinete del ESP32.</li>
+                            <li><span class="highlight-text">✓</span> Cantidad y estado de las campanas o parlantes a controlar.</li>
+                        </ul>
+                    </div>
+                    <div style="margin-top:0.8rem; padding:0.9rem 1.1rem; background:rgba(24,212,255,0.05); border:1px solid rgba(24,212,255,0.25); border-radius:10px; display:flex; align-items:center; gap:1rem;">
+                        <span class="material-symbols-outlined" style="font-size:2.3rem; color:var(--accent-cyan); flex-shrink:0;">schedule</span>
+                        <div>
+                            <strong style="color:var(--text-main); font-size:0.95rem; display:block; margin-bottom:0.2rem;">Duración Estimada: 2 a 3 Horas</strong>
+                            <p style="font-size:0.82rem; color:var(--text-muted); margin:0; line-height:1.4;">
+                                Tiempo necesario para inspeccionar tablero, cableado y campanario, y dejar cerrado el presupuesto final junto al directivo.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 11: Auditoría técnica y resiliencia a cortes -->
+        <section class="slide" data-speaker="Matías Balderrama (Auditor de Calidad)" data-time="18:00 - 20:00">
+            <div class="slide-tag"><span class="material-symbols-outlined">verified</span> Control de Calidad</div>
+            <h2 class="slide-title">Ensayos de Auditoría Técnica</h2>
+            <p class="slide-subtitle">Protocolo de validación de seguridad, resiliencia eléctrica y confiabilidad del software.</p>
+
+            <div class="grid-3">
+                <div class="slide-card">
+                    <span class="material-symbols-outlined card-icon" style="color:var(--accent-green);">bolt</span>
+                    <div class="card-title">Ensayo de Desconexión</div>
+                    <div class="card-desc">Simulación de cortes de red. El ESP32 se apaga por falta de 220V, pero al volver la tensión se reconecta en 2.8 segundos con hora precisa y horarios intactos.</div>
+                </div>
+                <div class="slide-card">
+                    <span class="material-symbols-outlined card-icon">wifi_off</span>
+                    <div class="card-title">Inmunidad a Internet</div>
+                    <div class="card-desc">No requiere conexión a la nube ni servidores externos. Si se cae el internet de la escuela o la provincia, el timbre sigue sonando con puntualidad atómica.</div>
+                </div>
+                <div class="slide-card">
+                    <span class="material-symbols-outlined card-icon">speed</span>
+                    <div class="card-title">Auditoría de Software</div>
+                    <div class="card-desc">Cero librerías pesadas en el navegador. Interfaz servida directamente desde el microcontrolador o la web estática con tiempos de carga menores a 0.5s.</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 12: Demo en vivo -->
+        <section class="slide" data-speaker="Matías Balderrama + Equipo" data-time="20:00 - 24:00">
+            <div class="slide-tag"><span class="material-symbols-outlined">play_circle</span> Demostración en Directo</div>
+            <h2 class="slide-title">Puesta en Marcha en Tiempo Real</h2>
+            <p class="slide-subtitle">Prueba del sistema: Conexión Wi-Fi, ajuste horario, disparo manual y programación de timbre.</p>
+
+            <div class="grid-2">
+                <div class="slide-card" style="border-color:var(--accent-green);">
+                    <div class="card-title" style="color:var(--accent-green); display:flex; align-items:center; gap:0.5rem;">
+                        <span class="material-symbols-outlined">cellphone</span>
+                        Paso a Paso de la Demo
+                    </div>
+                    <ol style="line-height:2; color:var(--text-main); padding-left:1.2rem; font-size:0.95rem;">
+                        <li>Conexión al Wi-Fi: <code style="color:var(--accent-cyan); font-family:var(--font-mono);">Temporizador_ESP32</code></li>
+                        <li>Ingreso al panel en navegador: <code style="color:var(--accent-cyan); font-family:var(--font-mono);">192.168.4.1</code> (puerta de enlace)</li>
+                        <li>Sincronización instantánea con la hora del celular.</li>
+                        <li>Activación del <strong>Disparo de Prueba</strong> (enciende lámpara testigo y zumbador).</li>
+                        <li>Carga de horario y verificación de conmutación.</li>
+                    </ol>
+                </div>
+                <div class="slide-card" style="justify-content:center; align-items:center; text-align:center;">
+                    <div class="brand-title" style="font-size:1.8rem; margin-bottom:0.8rem;">¡Muchas Gracias!</div>
+                    <p class="card-desc" style="margin-bottom:1.5rem;">Equipo Tecno Electrónica — IPETyM Nº 84 (Tanti, Córdoba)<br>Abrimos el espacio para las preguntas del Honorable Tribunal.</p>
+                    
+                    <div style="display:flex; gap:0.8rem;">
+                        <a href="manual-usuario-timbre.html" target="_blank" class="btn-action btn-ghost">
+                            <span class="material-symbols-outlined">menu_book</span> Manual de Usuario
+                        </a>
+                        <a href="index.html" target="_blank" class="btn-action btn-cyan">
+                            <span class="material-symbols-outlined">home</span> Volver a la Web
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 13: Tecno Bot / asistencia conversacional -->
+        <section class="slide" data-speaker="Raúl Boulchouk (Vocero / Marketing)" data-time="24:00 - 26:00">
+            <div class="slide-tag"><span class="material-symbols-outlined">smart_toy</span> Innovación Digital</div>
+            <h2 class="slide-title">Tecno Bot: Captación y Diagnóstico</h2>
+            <p class="slide-subtitle">Asistente conversacional interactivo embebido en la web oficial para cotizar y asesorar a directivos en tiempo real.</p>
+
+            <div class="grid-2">
+                <div class="slide-card">
+                    <div class="card-title">Capacidades del Bot</div>
+                    <ul style="list-style:none; line-height:2; color:var(--text-muted); font-size:0.95rem;">
+                        <li><span class="highlight-text">✓</span> Diagnóstico interactivo según necesidad escolar o comercial.</li>
+                        <li><span class="highlight-text">✓</span> Base de conocimiento completa sobre los 9 servicios de la empresa.</li>
+                        <li><span class="highlight-text">✓</span> Generación de resumen y pre-cotización antes del contacto humano.</li>
+                        <li><span class="highlight-text">✓</span> Conversación inteligente en tiempo real con historial persistente.</li>
+                    </ul>
+                </div>
+                <div class="slide-card" style="justify-content:center; align-items:center; text-align:center; padding:1.8rem;">
+                    <span class="material-symbols-outlined" style="font-size:3.5rem; color:var(--accent-cyan); margin-bottom:0.7rem;">neurology</span>
+                    <div class="card-title" style="font-size:1.3rem; margin-bottom:0.4rem;">Un Bot Hecho a Medida</div>
+                    <div style="display:inline-flex; align-items:center; gap:0.4rem; background:rgba(24,212,255,0.1); border:1px solid rgba(24,212,255,0.3); border-radius:20px; padding:0.3rem 0.85rem; margin-bottom:0.9rem; font-family:var(--font-mono); font-size:0.8rem; color:var(--accent-cyan);">
+                        <span class="material-symbols-outlined" style="font-size:16px;">api</span> Conexión con Google AI Studio
+                    </div>
+                    <p class="card-desc" style="font-size:0.95rem; line-height:1.55; max-width:480px;">
+                        Incluye la <strong style="color:var(--accent-cyan);">API de Google AI Studio</strong> para hablar y dialogar con él en lenguaje natural, estando programado y <strong style="color:var(--accent-green);">diseñado 100% a medida</strong> para resolver al instante todas las consultas y dudas de los clientes.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 14: Portafolio de 9 servicios -->
+        <section class="slide" data-speaker="Raúl Boulchouk + Felipe Aballay" data-time="26:00 - 28:00">
+            <div class="slide-tag"><span class="material-symbols-outlined">apps</span> Cartera Integral</div>
+            <h2 class="slide-title">Los 9 Servicios de Tecno Electrónica</h2>
+            <p class="slide-subtitle">Soluciones modulares para escuelas, comercios e industrias. Seleccioná un servicio para conocerlo en detalle.</p>
+            <div class="grid-3" style="font-size:0.85rem;">
+                <div class="slide-card" style="padding:1rem;"><a class="service-link" href="servicios/timbre-automatico.html" target="_blank"><strong>1. Timbre Automático</strong><span style="color:var(--text-muted)">Gestión horaria escolar autónoma.</span></a></div>
+                <div class="slide-card" style="padding:1rem;"><a class="service-link" href="servicios/paginas-web.html" target="_blank"><strong>2. Desarrollo Web</strong><span style="color:var(--text-muted)">Sitios corporativos y paneles técnicos.</span></a></div>
+                <div class="slide-card" style="padding:1rem;"><a class="service-link" href="servicios/marketing-digital.html" target="_blank"><strong>3. Marketing y SEO</strong><span style="color:var(--text-muted)">Posicionamiento y captación digital.</span></a></div>
+                <div class="slide-card" style="padding:1rem;"><a class="service-link" href="servicios/instalaciones-electricas.html" target="_blank"><strong>4. Instalaciones Eléctricas</strong><span style="color:var(--text-muted)">Obras bajo normativa AEA.</span></a></div>
+                <div class="slide-card" style="padding:1rem;"><a class="service-link" href="servicios/paneles-solares.html" target="_blank"><strong>5. Paneles Solares</strong><span style="color:var(--text-muted)">Energía fotovoltaica para cada necesidad.</span></a></div>
+                <div class="slide-card" style="padding:1rem;"><a class="service-link" href="servicios/porteros.html" target="_blank"><strong>6. Porteros Eléctricos</strong><span style="color:var(--text-muted)">Intercomunicadores para escuelas y hogares.</span></a></div>
+                <div class="slide-card" style="padding:1rem;"><a class="service-link" href="servicios/arduino.html" target="_blank"><strong>7. Prototipado Arduino</strong><span style="color:var(--text-muted)">Microcontroladores y automatización.</span></a></div>
+                <div class="slide-card" style="padding:1rem;"><a class="service-link" href="servicios/metodo-lumen.html" target="_blank"><strong>8. Método Lumen</strong><span style="color:var(--text-muted)">Cálculo de iluminación para aulas.</span></a></div>
+                <div class="slide-card" style="padding:1rem;"><a class="service-link" href="servicios/cctv.html" target="_blank"><strong>9. CCTV y Cámaras IP</strong><span style="color:var(--text-muted)">Videovigilancia y monitoreo HD.</span></a></div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer Controls -->
+    <footer class="slide-footer">
+        <div class="footer-left">
+            <span>Navegación: <span class="key-hint">←</span> <span class="key-hint">→</span> <span class="key-hint">ESPACIO</span></span>
+            <span>Pantalla completa: <span class="key-hint">F</span></span>
+        </div>
+
+        <div class="footer-center">
+            <button class="btn-nav" id="btn-prev" title="Anterior (Flecha izquierda)">
+                <span class="material-symbols-outlined">chevron_left</span>
+            </button>
+            <div class="slide-counter" id="slide-counter">01 / 14</div>
+            <button class="btn-nav" id="btn-next" title="Siguiente (Flecha derecha o Espacio)">
+                <span class="material-symbols-outlined">chevron_right</span>
+            </button>
+        </div>
+
+        <div class="footer-right">
+            <div class="timer-box" id="presentation-timer" title="Tiempo transcurrido">
+                <span class="material-symbols-outlined" style="font-size:16px;">timer</span>
+                <span id="timer-display">00:00</span>
+            </div>
+            <button class="btn-fullscreen" id="btn-fs-toggle">
+                <span class="material-symbols-outlined" style="font-size:16px;">fullscreen</span>
+                <span>TV Fullscreen</span>
+            </button>
+        </div>
+    </footer>
+
+    <!-- Progress Line -->
+    <div class="progress-bar-container">
+        <div class="progress-bar" id="progress-bar"></div>
+    </div>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const counterEl = document.getElementById('slide-counter');
+        const progressBar = document.getElementById('progress-bar');
+        const speakerEl = document.getElementById('current-speaker');
+        const btnPrev = document.getElementById('btn-prev');
+        const btnNext = document.getElementById('btn-next');
+        const btnFs = document.getElementById('btn-fs-toggle');
+
+        let currentIndex = 0;
+        const totalSlides = slides.length;
+
+        function updateSlide(index) {
+            if (index < 0) index = 0;
+            if (index >= totalSlides) index = totalSlides - 1;
+            currentIndex = index;
+
+            slides.forEach((slide, i) => {
+                slide.classList.toggle('active', i === currentIndex);
+            });
+
+            // Update counter
+            const currentFormatted = String(currentIndex + 1).padStart(2, '0');
+            const totalFormatted = String(totalSlides).padStart(2, '0');
+            counterEl.textContent = `${currentFormatted} / ${totalFormatted}`;
+
+            // Update Progress Bar
+            const progress = ((currentIndex + 1) / totalSlides) * 100;
+            progressBar.style.width = `${progress}%`;
+
+            // Update Speaker badge
+            const currentSlide = slides[currentIndex];
+            const speaker = currentSlide.getAttribute('data-speaker') || 'Tecno Electrónica';
+            const timeSlot = currentSlide.getAttribute('data-time') || '';
+            speakerEl.innerHTML = `<span class="material-symbols-outlined" style="font-size:16px;">person</span> <span>${speaker} (${timeSlot})</span>`;
+        }
+
+        function nextSlide() {
+            if (currentIndex < totalSlides - 1) {
+                updateSlide(currentIndex + 1);
+            }
+        }
+
+        function prevSlide() {
+            if (currentIndex > 0) {
+                updateSlide(currentIndex - 1);
+            }
+        }
+
+        // Button clicks
+        btnNext.addEventListener('click', nextSlide);
+        btnPrev.addEventListener('click', prevSlide);
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+                e.preventDefault();
+                prevSlide();
+            } else if (e.key === 'f' || e.key === 'F') {
+                e.preventDefault();
+                toggleFullscreen();
+            } else if (e.key === 'Home') {
+                e.preventDefault();
+                updateSlide(0);
+            } else if (e.key === 'End') {
+                e.preventDefault();
+                updateSlide(totalSlides - 1);
+            }
+        });
+
+        // Fullscreen Toggle
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log('Error attempting to enable fullscreen:', err);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        btnFs.addEventListener('click', toggleFullscreen);
+
+        // Presentation Timer (Stopwatch for the 25 min limit)
+        let startTime = Date.now();
+        const timerDisplay = document.getElementById('timer-display');
+
+        setInterval(() => {
+            const elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
+            const minutes = Math.floor(elapsedSeconds / 60);
+            const seconds = elapsedSeconds % 60;
+            timerDisplay.textContent = 
+                `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            
+            // Highlight if reaching 23 minutes
+            if (minutes >= 23) {
+                timerDisplay.style.color = '#ff6b6b';
+            }
+        }, 1000);
+
+        // Demostración visual de señal manual hacia el timbre
+        const manualBellButton = document.getElementById('btn-manual-bell');
+        const controlSignal = document.getElementById('control-signal');
+        const signalFeedback = document.getElementById('signal-feedback');
+        let signalTimer;
+        manualBellButton?.addEventListener('click', () => {
+            controlSignal?.classList.remove('signal-active');
+            void controlSignal?.offsetWidth;
+            controlSignal?.classList.add('signal-active');
+            if (signalFeedback) signalFeedback.textContent = 'Señal enviada al timbre';
+            clearTimeout(signalTimer);
+            signalTimer = setTimeout(() => {
+                controlSignal?.classList.remove('signal-active');
+                if (signalFeedback) signalFeedback.textContent = 'Listo para enviar';
+            }, 1800);
+        });
+        // Diagrama interactivo: energía y datos
+        const diagramDetail = document.getElementById('diagram-detail');
+        const diagramDetails = {
+            solar: { icon: 'solar_power', title: 'Panel solar', tag: 'Energía renovable', text: 'Convierte la luz del sol en electricidad de corriente continua. Esa energía inicia el recorrido hacia el regulador de carga.' },
+            regulador: { icon: 'tune', title: 'Regulador de carga', tag: 'Carga segura', text: 'Administra la energía que llega del panel para cargar la batería de forma controlada y protegerla ante sobrecargas.' },
+            bateria: { icon: 'battery_charging_full', title: 'Batería de 12 V', tag: 'Reserva de energía', text: 'Almacena la energía obtenida del sol. Desde aquí salen dos caminos: uno de 5 V para el ESP32 y otro hacia el inversor.' },
+            reductor: { icon: 'settings_input_component', title: 'Reductor de tensión', tag: '12 V → 5 V', text: 'Reduce los 12 V de la batería a 5 V estables, la tensión segura que utiliza el ESP32 para funcionar.' },
+            esp32: { icon: 'memory', title: 'ESP32 / microcontrolador', tag: 'Control inteligente', text: 'Recibe alimentación de 5 V, guarda la programación y coordina los horarios, los timbres y las acciones manuales.' },
+            web: { icon: 'language', title: 'Página de control local', tag: 'Flujo de datos', text: 'Permite programar horarios y activar funciones desde un celular o computadora conectados a la red local del equipo.', action: { href: 'panel/panel.html', label: 'Abrir panel del timbre' } },
+            inversor: { icon: 'swap_vert', title: 'Inversor de tensión', tag: '12 V → 220 V', text: 'Usa la energía de 12 V de la batería para generar 220 V destinados únicamente al timbre y a la sirena de emergencia.' },
+            timbres: { icon: 'notifications_active', title: 'Timbres', tag: 'Señales programadas', text: 'Reciben 220 V desde el inversor cuando el esp32 ejecuta un horario configurado desde la página local.' },
+            sirena: { icon: 'warning', title: 'Sirena de emergencia', tag: 'Acción manual', text: 'Recibe 220 V desde el inversor y puede activarse de manera manual desde la página de control para una evacuación.' }
+        };
+        document.querySelectorAll('[data-detail]').forEach(node => {
+            node.addEventListener('click', () => {
+                const detail = diagramDetails[node.dataset.detail];
+                if (!detail || !diagramDetail) return;
+                document.querySelectorAll('[data-detail]').forEach(item => item.classList.remove('selected'));
+                node.classList.add('selected');
+                const action = detail.action ? `<a class="detail-action" href="${detail.action.href}" target="_blank" rel="noopener"><span class="material-symbols-outlined" style="font-size:15px;">open_in_new</span>${detail.action.label}</a>` : '';
+                diagramDetail.innerHTML = `<span class="material-symbols-outlined">${detail.icon}</span><div><h3>${detail.title}</h3><p>${detail.text}</p>${action}</div><span class="detail-tag">${detail.tag}</span>`;
+                diagramDetail.style.animation = 'none';
+                requestAnimationFrame(() => { diagramDetail.style.animation = ''; });
+            });
+        });
+        // Inicialización y controles del visor 3D (Slide 10)
+        const timbreViewer = document.getElementById('timbre-model-viewer');
+        const btnToggleRotate = document.getElementById('btn-toggle-rotate');
+        const btnResetCam = document.getElementById('btn-reset-cam');
+
+        if (timbreViewer) {
+            if (window.TIMBRE_3D_DATA && (window.location.protocol === 'file:' || !timbreViewer.getAttribute('src'))) {
+                timbreViewer.src = window.TIMBRE_3D_DATA;
+            }
+
+            if (btnToggleRotate) {
+                btnToggleRotate.addEventListener('click', () => {
+                    timbreViewer.autoRotate = !timbreViewer.autoRotate;
+                    btnToggleRotate.textContent = timbreViewer.autoRotate ? 'Pausar giro' : 'Girar auto';
+                    btnToggleRotate.style.color = timbreViewer.autoRotate ? 'var(--accent-cyan)' : 'var(--text-muted)';
+                });
+            }
+
+            if (btnResetCam) {
+                btnResetCam.addEventListener('click', () => {
+                    timbreViewer.cameraOrbit = '35deg 65deg auto';
+                    if (typeof timbreViewer.resetTurntable === 'function') {
+                        timbreViewer.resetTurntable();
+                    }
+                });
+            }
+        }
+
+        // Initialize
+        updateSlide(0);
+    </script>
+</body>
+</html>

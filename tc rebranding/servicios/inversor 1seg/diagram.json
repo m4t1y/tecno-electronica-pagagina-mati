@@ -1,0 +1,79 @@
+{
+  "version": 1,
+  "author": "Antigravity AI",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "wokwi-arduino-uno", "id": "uno", "top": 100, "left": 0, "attrs": {} },
+    {
+      "type": "wokwi-resistor",
+      "id": "rb1",
+      "top": 150,
+      "left": 300,
+      "attrs": { "value": "1000" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "rb2",
+      "top": 250,
+      "left": 300,
+      "attrs": { "value": "1000" }
+    },
+    {
+      "type": "wokwi-transistor-npn",
+      "id": "q1",
+      "top": 130,
+      "left": 420,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-transistor-npn",
+      "id": "q2",
+      "top": 230,
+      "left": 420,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-led",
+      "id": "led1",
+      "top": 50,
+      "left": 430,
+      "attrs": { "color": "red" }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "led2",
+      "top": 50,
+      "left": 500,
+      "attrs": { "color": "green" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "rled1",
+      "top": 0,
+      "left": 400,
+      "attrs": { "value": "220" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "rled2",
+      "top": 0,
+      "left": 480,
+      "attrs": { "value": "220" }
+    }
+  ],
+  "connections": [
+    [ "uno:2", "rb1:1", "green", [ "h0" ] ],
+    [ "rb1:2", "q1:B", "green", [ "h0" ] ],
+    [ "uno:3", "rb2:1", "blue", [ "h0" ] ],
+    [ "rb2:2", "q2:B", "blue", [ "h0" ] ],
+    [ "q1:E", "uno:GND.1", "black", [ "v0", "h-200" ] ],
+    [ "q2:E", "uno:GND.1", "black", [ "v0", "h-200" ] ],
+    [ "uno:5V", "rled1:1", "red", [ "v-50", "h100" ] ],
+    [ "uno:5V", "rled2:1", "red", [ "v-50", "h180" ] ],
+    [ "rled1:2", "led1:A", "red", [ "v0" ] ],
+    [ "rled2:2", "led2:A", "green", [ "v0" ] ],
+    [ "led1:C", "q1:C", "red", [ "v0" ] ],
+    [ "led2:C", "q2:C", "green", [ "v0" ] ]
+  ],
+  "dependencies": {}
+}

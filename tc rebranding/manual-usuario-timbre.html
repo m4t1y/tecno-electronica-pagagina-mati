@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manual de Usuario — Timbre Automático Escolar | Tecno Electrónica</title>
+    <link rel="icon" href="portada/logo.jpeg" type="image/jpeg">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-dark: #061A2B;
+            --bg-card: #0B2538;
+            --bg-surface: #102F45;
+            --accent-cyan: #18D4FF;
+            --accent-green: #58F29C;
+            --text-main: #FFFFFF;
+            --text-muted: #A0AEC0;
+            --border: rgba(24, 212, 255, 0.25);
+            --font-display: 'Sora', sans-serif;
+            --font-body: 'Inter', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            line-height: 1.6;
+            padding: 2.5rem 1.5rem;
+        }
+
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+        }
+
+        /* Top Header */
+        header.manual-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .brand img {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            border: 1px solid var(--accent-cyan);
+        }
+
+        .brand-title {
+            font-family: var(--font-display);
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        .brand-title span {
+            color: var(--accent-cyan);
+        }
+
+        .brand-sub {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-family: var(--font-mono);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 0.8rem;
+        }
+
+        .btn-print {
+            background: var(--accent-cyan);
+            color: var(--bg-dark);
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-family: var(--font-display);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-print:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 15px rgba(24, 212, 255, 0.4);
+        }
+
+        .btn-back {
+            background: transparent;
+            color: var(--text-main);
+            border: 1px solid var(--border);
+            padding: 0.6rem 1rem;
+            border-radius: 8px;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .btn-back:hover {
+            border-color: var(--accent-cyan);
+        }
+
+        /* Title Area */
+        .doc-title-area {
+            margin-bottom: 2.5rem;
+        }
+
+        .doc-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: rgba(24, 212, 255, 0.1);
+            color: var(--accent-cyan);
+            border: 1px solid var(--border);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-family: var(--font-mono);
+            margin-bottom: 0.8rem;
+        }
+
+        h1.doc-title {
+            font-family: var(--font-display);
+            font-size: 2.4rem;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 0.6rem;
+            color: #FFFFFF;
+        }
+
+        p.doc-subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        /* Card Section */
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        h2.section-title {
+            font-family: var(--font-display);
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: var(--accent-cyan);
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            margin-bottom: 1.2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 0.6rem;
+        }
+
+        /* Step Guide */
+        .step-block {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 1.8rem;
+            padding-bottom: 1.8rem;
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.08);
+        }
+
+        .step-block:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .step-num {
+            width: 44px;
+            height: 44px;
+            background: rgba(24, 212, 255, 0.1);
+            border: 2px solid var(--accent-cyan);
+            color: var(--accent-cyan);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .step-content {
+            flex-grow: 1;
+        }
+
+        .step-heading {
+            font-family: var(--font-display);
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+            color: #FFFFFF;
+        }
+
+        .step-text {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .code-pill {
+            background: #011525;
+            border: 1px solid rgba(24, 212, 255, 0.3);
+            border-radius: 6px;
+            padding: 0.5rem 0.9rem;
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            color: var(--accent-green);
+            display: inline-block;
+            margin-top: 0.2rem;
+        }
+
+        /* Callout */
+        .callout-box {
+            background: rgba(88, 242, 156, 0.07);
+            border-left: 4px solid var(--accent-green);
+            padding: 1rem 1.2rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+            color: #E2E8F0;
+        }
+
+        .callout-box strong {
+            color: var(--accent-green);
+        }
+
+        /* Specs Grid */
+        .specs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .spec-item {
+            background: var(--bg-surface);
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .spec-label {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--accent-cyan);
+            text-transform: uppercase;
+        }
+
+        .spec-val {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-top: 0.2rem;
+        }
+
+        /* Footer */
+        footer.manual-footer {
+            border-top: 1px solid var(--border);
+            padding-top: 1.5rem;
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-family: var(--font-mono);
+        }
+
+        /* Print Mode */
+        @media print {
+            body {
+                background: #FFFFFF !important;
+                color: #1A202C !important;
+                padding: 0 !important;
+            }
+
+            .header-actions, .btn-print, .btn-back {
+                display: none !important;
+            }
+
+            .section-card {
+                background: #F7FAFC !important;
+                border: 1px solid #CBD5E0 !important;
+                color: #2D3748 !important;
+                box-shadow: none !important;
+                page-break-inside: avoid;
+            }
+
+            h1.doc-title, .brand-title, .step-heading {
+                color: #1A202C !important;
+            }
+
+            .step-text, p.doc-subtitle {
+                color: #4A5568 !important;
+            }
+
+            h2.section-title {
+                color: #007791 !important;
+                border-bottom: 1px solid #CBD5E0 !important;
+            }
+
+            .code-pill {
+                background: #EDF2F7 !important;
+                color: #2B6CB0 !important;
+                border: 1px solid #CBD5E0 !important;
+            }
+
+            .step-num {
+                border-color: #007791 !important;
+                color: #007791 !important;
+                background: #EBF8FF !important;
+            }
+
+            .callout-box {
+                background: #F0FFF4 !important;
+                border-left-color: #2F855A !important;
+                color: #22543D !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+
+        <!-- Header -->
+        <header class="manual-header">
+            <div class="brand">
+                <img src="portada/logo.jpeg" alt="Tecno Electrónica">
+                <div>
+                    <div class="brand-title">Tecno <span>Electrónica</span></div>
+                    <div class="brand-sub">IPETyM Nº 84 — Tanti, Córdoba</div>
+                </div>
+            </div>
+
+            <div class="header-actions">
+                <a href="index.html" class="btn-back">
+                    <span class="material-symbols-outlined" style="font-size:16px;">arrow_back</span>
+                    Volver a la Web
+                </a>
+                <button class="btn-print" onclick="window.print()">
+                    <span class="material-symbols-outlined" style="font-size:16px;">print</span>
+                    Imprimir / Guardar PDF
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Title -->
+        <div class="doc-title-area">
+            <span class="doc-badge">
+                <span class="material-symbols-outlined" style="font-size:14px;">verified</span>
+                MANUAL TÉCNICO OFICIAL — VERSIÓN 2.0
+            </span>
+            <h1 class="doc-title">Manual de Vinculación y Puesta en Marcha</h1>
+            <p class="doc-subtitle">Guía paso a paso para el personal directivo y preceptores para conectar el celular al Timbre Automático Escolar y gestionar horarios sin necesidad de internet.</p>
+        </div>
+
+        <!-- Section: Procedimiento Paso a Paso -->
+        <div class="section-card">
+            <h2 class="section-title">
+                <span class="material-symbols-outlined">wifi_tethering</span>
+                Procedimiento de Conexión (En 4 Pasos Rápidos)
+            </h2>
+
+            <!-- Paso 1 -->
+            <div class="step-block">
+                <div class="step-num">1</div>
+                <div class="step-content">
+                    <div class="step-heading">Conectarse a la red Wi-Fi del Timbre</div>
+                    <div class="step-text">
+                        Encienda el equipo asegurándose de que la luz LED testigo esté encendida. En su teléfono móvil o computadora, abra los ajustes de Wi-Fi y busque la red que emite el equipo:
+                    </div>
+                    <div>
+                        Nombre de Red (SSID): <span class="code-pill">Temporizador_ESP32</span><br>
+                        Contraseña de Acceso: <span class="code-pill">12345678</span>
+                    </div>
+                    <div class="callout-box">
+                        <strong>Nota importante:</strong> Su teléfono indicará <em>"Wi-Fi sin conexión a internet"</em>. Esto es completamente normal, ya que el equipo funciona como un servidor local privado. Seleccione la opción <strong>"Mantener conexión"</strong>.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Paso 2 -->
+            <div class="step-block">
+                <div class="step-num">2</div>
+                <div class="step-content">
+                    <div class="step-heading">Abrir el Panel de Control en el Navegador</div>
+                    <div class="step-text">
+                        Abra Chrome, Safari o su navegador web favorito y escriba exactamente la siguiente dirección IP en la barra de búsqueda:
+                    </div>
+                    <div>
+                        Dirección IP de Acceso: <span class="code-pill">http://192.168.4.1</span>
+                    </div>
+                    <div class="step-text" style="margin-top:0.8rem;">
+                        Se cargará al instante el panel interactivo de Tecno Electrónica con el reloj digital en tiempo real y la lista de horarios escolares.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Paso 3 -->
+            <div class="step-block">
+                <div class="step-num">3</div>
+                <div class="step-content">
+                    <div class="step-heading">Sincronizar Fecha y Hora del Reloj DS3231</div>
+                    <div class="step-text">
+                        Para asegurar que el timbre suene exactamente al segundo con el reloj de preceptoría:
+                    </div>
+                    <ul style="color:var(--text-muted); font-size:0.95rem; margin-left:1.5rem; line-height:1.8;">
+                        <li>Toque el botón <strong>"Usar hora del celular"</strong>. Los campos de año, mes, día, hora y segundo se autocompletarán con la hora atómica de su teléfono.</li>
+                        <li>Toque <strong>"Guardar hora en el reloj"</strong>. El módulo RTC DS3231 almacenará la fecha de forma permanente.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Paso 4 -->
+            <div class="step-block">
+                <div class="step-num">4</div>
+                <div class="step-content">
+                    <div class="step-heading">Programar Horarios de Entrada, Recreo y Salida</div>
+                    <div class="step-text">
+                        En la sección de horarios (hasta 40 alarmas programables):
+                    </div>
+                    <ul style="color:var(--text-muted); font-size:0.95rem; margin-left:1.5rem; line-height:1.8;">
+                        <li>Marque la casilla de activación <span class="code-pill">✓</span> para los turnos requeridos.</li>
+                        <li>Configure la hora y minuto de <strong>Encendido (ON)</strong> y la hora y minuto de <strong>Apagado (OFF)</strong> (por ejemplo: para que suene 5 segundos, de 07:30:00 a 07:30:05).</li>
+                        <li>Al finalizar, presione el botón <strong style="color:var(--accent-green);">"Guardar en EEPROM"</strong>.</li>
+                    </ul>
+                    <div class="callout-box">
+                        <strong>Protección ante Cortes de Luz:</strong> Al guardar en EEPROM, los horarios no se borran aunque la escuela se quede sin luz durante días o semanas. Al volver la energía eléctrica, el equipo reanuda sus funciones automáticamente.
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Section: Ficha Técnica -->
+        <div class="section-card">
+            <h2 class="section-title">
+                <span class="material-symbols-outlined">settings_suggest</span>
+                Especificaciones Técnicas del Fabricante
+            </h2>
+
+            <div class="specs-grid">
+                <div class="spec-item">
+                    <div class="spec-label">Microcontrolador</div>
+                    <div class="spec-val">ESP32 Dual-Core 240 MHz</div>
+                </div>
+                <div class="spec-item">
+                    <div class="spec-label">Referencia Horaria</div>
+                    <div class="spec-val">RTC DS3231 TCXO (±2 ppm)</div>
+                </div>
+                <div class="spec-item">
+                    <div class="spec-label">Batería de Respaldo</div>
+                    <div class="spec-val">Pila de Litio CR2032 (3V)</div>
+                </div>
+                <div class="spec-item">
+                    <div class="spec-label">Salida de Potencia</div>
+                    <div class="spec-val">Relé Optoacoplado 10A / 250V AC</div>
+                </div>
+                <div class="spec-item">
+                    <div class="spec-label">Conectividad</div>
+                    <div class="spec-val">Wi-Fi 802.11 b/g/n (Modo AP)</div>
+                </div>
+                <div class="spec-item">
+                    <div class="spec-label">Gabinete y Protección</div>
+                    <div class="spec-val">Caja Estanca Ignífuga IP65</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section: Soporte y Contacto -->
+        <div class="section-card" style="border-color:var(--accent-green);">
+            <h2 class="section-title" style="color:var(--accent-green);">
+                <span class="material-symbols-outlined">support_agent</span>
+                Soporte y Asistencia Técnica
+            </h2>
+            <p style="color:var(--text-muted); font-size:0.95rem; margin-bottom:1rem;">
+                Diseñado, programado y testeado íntegramente por el equipo de estudiantes del <strong>IPETyM Nº 84 "Jorge Vocos Lescano"</strong> (Tanti, Córdoba).
+            </p>
+            <div style="font-family:var(--font-mono); font-size:0.9rem; color:#FFFFFF;">
+                📧 Email: <span style="color:var(--accent-cyan);">tecno.electronica@gmail.com</span><br>
+                📱 WhatsApp Técnico: <span style="color:var(--accent-green);">+54 9 3541 26 7777</span><br>
+                🌐 Web Oficial: <span style="color:var(--accent-cyan);">https://tecnoelectronica.netlify.app</span>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="manual-footer">
+            © 2026 Tecno Electrónica — Empresa Simulada IPETyM Nº 84. Todos los derechos reservados.
+        </footer>
+
+    </div>
+
+</body>
+</html>
